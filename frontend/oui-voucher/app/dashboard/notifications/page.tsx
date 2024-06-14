@@ -34,7 +34,7 @@ export function Page() {
   }, []);
 
   const fetchNotifications = () => {
-    fetch("http://127.0.0.1:8000/voucher/get-notifications/", {
+    fetch("https://voucher.pythonanywhere.com/voucher/get-notifications/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -59,13 +59,16 @@ export function Page() {
   };
 
   const handleDeleteNotification = (id: number) => {
-    fetch(`http://127.0.0.1:8000/voucher/get-notifications/?id=${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Token ${getToken()}`,
-      },
-    })
+    fetch(
+      `https://voucher.pythonanywhere.com/voucher/get-notifications/?id=${id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Token ${getToken()}`,
+        },
+      }
+    )
       .then((response) => {
         if (!response.ok) {
           throw Error("Network response was not ok");
