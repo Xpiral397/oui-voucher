@@ -83,6 +83,7 @@ export const Navbar = () => {
             const data_ = data.json();
             return data_;
           } else {
+            if(window.location.href.includes('dashboard'))))
             toast.error("Unable to  fetch user balnce ");
           }
         })

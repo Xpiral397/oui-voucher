@@ -1,5 +1,6 @@
 import React from "react";
+import Voucher from "../page";
 
 export default function Page() {
-  return <div>tn5nt</div>;
+  return <Voucher />;
 }
