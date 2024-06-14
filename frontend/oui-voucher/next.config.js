@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig={
-    ignoreBuildError:true,
+
     eslint: {
-        ignoreDruingBuild: true
+        ignoreDuringBuilds: true
     }
 }
 module.exports = nextConfig
