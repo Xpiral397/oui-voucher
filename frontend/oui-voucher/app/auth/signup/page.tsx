@@ -57,7 +57,7 @@ export default function SiginCar() {
 
   useEffect(() => {
     if (user && user.matric_number) {
-      router.push("/dashboard");
+      router.push("/dashboard/voucher");
     }
     if (has) {
       setError((prevError: any) => ({
