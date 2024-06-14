@@ -11,8 +11,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { Signup } from "@/app/controller/auth/auth";
 import { SignupUser } from "@/controller/auth/auth";
-import {useUserContext} from "@/contexts/users/userUser";
-import {useUserPaylaod} from "@/contexts/types";
+import { useUserContext } from "@/contexts/users/userUser";
+import { useUserPaylaod } from "@/contexts/types";
 
 const Years = Array.from(
   { length: 5 },
@@ -56,9 +56,8 @@ export default function SiginCar() {
   });
 
   useEffect(() => {
-    if (user && !user.matric_number
-    ) {
-      router.push("/login");
+    if (user && user.matric_number) {
+      router.push("/dashboard");
     }
     if (has) {
       setError((prevError: any) => ({
@@ -138,7 +137,7 @@ export default function SiginCar() {
           "Registration Completed!, 🦄 Wow so easy!, Verify OTP sent to your gmail",
           {
             type: "success",
-            position: 'top-right',
+            position: "top-right",
             autoClose: 5000,
             hideProgressBar: false,
             closeOnClick: true,

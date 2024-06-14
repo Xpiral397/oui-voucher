@@ -54,7 +54,7 @@ export const Navbar = () => {
     setUser((e) => {
       return {} as Users;
     });
-    router.push("/login");
+    router.push("/auth/login");
     toast.success("Logut sucessfully", {
       autoClose: 5000,
       position: "top-right",
@@ -69,30 +69,31 @@ export const Navbar = () => {
     return () => clearTimeout(timer);
   }, []);
   useEffect(() => {
-    (async () => {
-      fetch(`${base}/voucher/get-balance`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "appliation/json",
-          authorization: `Token ${getToken()}`,
-        },
-      })
-        .then((data) => {
-          if (data.ok) {
-            // toast.success("User balnce fetched successfully");
-            const data_ = data.json();
-            return data_;
-          } else {
-            if(window.location.href.includes('dashboard'))))
-            toast.error("Unable to  fetch user balnce ");
-          }
+    if (window.location.href.includes("dashboard")) {
+      (async () => {
+        fetch(`${base}/voucher/get-balance`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "appliation/json",
+            authorization: `Token ${getToken()}`,
+          },
         })
-        .then((data) => {
-          setBalance((e) => {
-            return data?.balance;
+          .then((data) => {
+            if (data.ok) {
+              // toast.success("User balnce fetched successfully");
+              const data_ = data.json();
+              return data_;
+            } else {
+              toast.error("Unable to  fetch user balnce ");
+            }
+          })
+          .then((data) => {
+            setBalance((e) => {
+              return data?.balance;
+            });
           });
-        });
-    })();
+      })();
+    }
   });
   return (
     <NextUINavbar
@@ -188,7 +189,7 @@ export const Navbar = () => {
               isExternal
               as={Link}
               className="text-sm font-normal text-default-600 bg-default-100"
-              href={siteConfig.links.sponsor}
+              href={"/auth/login"}
               // startContent={< className="text-danger" />}
               variant="flat"
             >
