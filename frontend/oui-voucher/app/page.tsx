@@ -118,7 +118,7 @@ const Page = () => {
             </span>{" "}
             System
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-300 font-[400] text-center tracking-wide w-[300px] mb-10">
+          <p className="text-sm text-gray-500 dark:text-gray-300 font-[400] text-center tracking-wide md:w-full w-[300px] mb-10">
             OUI Online Voucher School Fees Remote Payment.
           </p>
           <div className="w-full flex sm:flex-row flex-col sm:space-x-0 space-x-2">
