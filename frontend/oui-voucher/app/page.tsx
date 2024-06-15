@@ -126,7 +126,8 @@ const Page = () => {
             <a
               href={
                 (user &&
-                  ((user.matric_number && "/dashboard") || "/auth/signup")) ??
+                  ((user.matric_number && "/dashboard/voucher") ||
+                    "/auth/signup")) ??
                 "#"
               }
               className="w-full"
