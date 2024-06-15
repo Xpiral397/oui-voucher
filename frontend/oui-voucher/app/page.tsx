@@ -141,7 +141,7 @@ const Page = () => {
               ) : (
                 <Button
                   isLoading={true}
-                  className="bg-gradient-to-r  from-blue-500  to-purple-500  rounded-md w-full py-4 shadow-sm drop-shadow-sm text-gray-400 font-bold"
+                  className="bg-gradient-to-r mb-4 from-blue-500  to-purple-500  rounded-md w-full py-4 shadow-sm drop-shadow-sm text-gray-400 font-bold"
                 >
                   Loading...
                 </Button>
