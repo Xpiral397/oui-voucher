@@ -120,7 +120,7 @@ const Page = () => {
           </p>
           <div className="w-full flex sm:flex-row flex-col sm:space-x-0 space-x-2">
             {" "}
-            <a href="/auth/signup">
+            <a href="/auth/signup" className="w-full">
               {" "}
               <div className="w-full bg-gradient-to-r from-slate-900 to-purple-500 p-[1px] rounded-md mb-4">
                 <button className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-md w-full py-4 shadow-xl drop-shadow-2xl text-gray-300 font-bold">
@@ -128,7 +128,7 @@ const Page = () => {
                 </button>
               </div>
             </a>
-            <a href="/auth/login">
+            <a href="/auth/login" className="w-full">
               <div className="w-full bg-gradient-to-r p-[1px] rounded-md">
                 <button className="bg-gradient-to-r  from-blue-500  to-purple-500  rounded-md w-full py-4 shadow-sm drop-shadow-sm text-gray-400 font-bold">
                   Login
