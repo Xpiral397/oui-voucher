@@ -15,7 +15,7 @@ export const siteConfig = {
   ],
   navMenuItems: [
     {
-      label: "Dashbaord",
+      label: "Dashboard",
       href: "/dashboard",
     },
     {
@@ -24,19 +24,19 @@ export const siteConfig = {
     },
     {
       label: "Invoice",
-      href: "/dashboard/voucher/new",
+      href: "/dashboard/voucher/new?i=invoice",
     },
     {
       label: "Recharge",
-      href: "/dashboard/voucher/new",
+      href: "/dashboard/voucher/new?i=recharge",
     },
     {
       label: "Notification",
-      href: "/dashboard/voucher/new",
+      href: "/dashboard/voucher/new?notification=get-all-from02g",
     },
     {
       label: "Settings",
-      href: "/dashboard/voucher/new",
+      href: "/dashboard/voucher/new?mySetting=backend-setting-api_keys",
     },
   ],
   links: {

@@ -46,6 +46,7 @@ import { toast } from "react-toastify";
 import { User as Users } from "@/contexts/types";
 export const Navbar = () => {
   const { setting, setSettings } = useContext(settingContext);
+  const [windows, setWindow] = useState<string>("");
   const [balance, setBalance] = useState(0.0);
   const { user, setUser } = useContext(useUserContext);
   const router = useRouter();
@@ -61,7 +62,9 @@ export const Navbar = () => {
       return { processing: true } as any;
     });
   };
-
+  useEffect(() => {
+    setWindow(window.location.href);
+  });
   useEffect(() => {
     if (window.location.href.includes("dashboard")) {
       const timer = setTimeout(() => {
@@ -272,11 +275,11 @@ export const Navbar = () => {
                 <NavbarMenuItem key={`${item}-${index}`}>
                   <Link
                     color={
-                      window.location.href.includes(item.href)
+                      windows?.includes(item.label.toLowerCase())
                         ? "danger"
                         : "foreground"
                     }
-                    href="#"
+                    href={item.href}
                     size="lg"
                   >
                     {item.label}
@@ -291,8 +294,7 @@ export const Navbar = () => {
             <div className="flex flex-col gap-2 mx-4 mt-2">
               <Link
                 color={
-                  !window.location.href.includes("/login") &&
-                  !window.location.href.includes("/signup")
+                  !windows?.includes("/login") && !windows?.includes("/signup")
                     ? "danger"
                     : "foreground"
                 }
@@ -302,22 +304,14 @@ export const Navbar = () => {
                 Home
               </Link>
               <Link
-                color={
-                  window.location.href.includes("/login")
-                    ? "danger"
-                    : "foreground"
-                }
+                color={windows?.includes("/login") ? "danger" : "foreground"}
                 href="/auth/login"
                 size="lg"
               >
                 Login
               </Link>
               <Link
-                color={
-                  window.location.href.includes("/signup")
-                    ? "danger"
-                    : "foreground"
-                }
+                color={windows?.includes("/signup") ? "danger" : "foreground"}
                 href="/auth/signup"
                 size="lg"
               >
