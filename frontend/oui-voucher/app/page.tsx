@@ -132,11 +132,7 @@ const Page = () => {
             </div>
           </div>
         </div>
-        <img
-          className="w-full md:w-[36rem] h-full mb-10"
-          alt="stripe payment from undraw"
-          src="/payments.svg"
-        />
+
         <FeaturesSection />
       </main>
 

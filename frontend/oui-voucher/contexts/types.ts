@@ -11,6 +11,7 @@ interface User {
   gender: "MALE" | "FEMALE" | "Male" | "Female";
   password?: string;
   re_password?: string;
+  processing: false;
   level: string;
   graduation: string;
 }

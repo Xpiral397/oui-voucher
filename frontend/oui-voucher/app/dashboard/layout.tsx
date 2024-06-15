@@ -5,17 +5,22 @@ import { ScrollShadow } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useUserContext } from "@/contexts/users/userUser";
 import { toast } from "react-toastify";
+import { User } from "@/contexts/types";
 
 export default function Layout({ children }: { children: ReactNode }) {
   const { user, setUser } = useContext(useUserContext);
   const router = useRouter();
   useEffect(() => {
-    if (user && !user?.matric_number) {
-      router.push("/login");
-      toast.error("You cant't vist this page without not login in" + user, {
+    if (user && !user?.matric_number && !user.processing) {
+      router.push("/auth/login");
+      toast.error("You cant't vist this page without not login in", {
         autoClose: 6000,
         position: "top-right",
       });
+    } else {
+      if (user?.processing) {
+        setUser((e) => ({}) as User);
+      }
     }
   }, [user]);
   return (

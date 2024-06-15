@@ -70,13 +70,24 @@ export default function SiginCar() {
     Level: "",
   });
 
-
-
   useEffect(() => {
-    if (user && !user.matric_number
-    ) {
-      router.push("/login");
+    if (user && user.matric_number && !password && !user?.processing) {
+      router.push("/dashboard/voucher");
+      toast.success(
+        "ops sorry, it might be sweet but you are already login can't do this again",
+        {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        }
+      );
     }
+
     if (has) {
       setError((prevError: any) => ({
         ...prevError,

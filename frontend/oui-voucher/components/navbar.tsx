@@ -51,22 +51,25 @@ export const Navbar = () => {
   const router = useRouter();
 
   const Logout = () => {
-    setUser((e) => {
-      return {} as Users;
-    });
     router.push("/auth/login");
-    toast.success("Logut sucessfully", {
+    toast.success("Logout sucessfully", {
       autoClose: 5000,
       position: "top-right",
+    });
+
+    setUser((e) => {
+      return { processing: true } as any;
     });
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      window.location.reload();
-    }, 60000);
+    if (window.location.href.includes("dashboard")) {
+      const timer = setTimeout(() => {
+        window.location.reload();
+      }, 60000);
 
-    return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
+    }
   }, []);
   useEffect(() => {
     if (window.location.href.includes("dashboard")) {
@@ -162,21 +165,19 @@ export const Navbar = () => {
                   className="font-sans"
                 >
                   <DropdownItem key="balanced" className="h-14 gap-2">
-                    <Button className="w-full text-[16px] font-serif  bg-blue-500 text-white dark:bg-slate-900 dark:text-slate-300">
+                    <Button className="w-full text-[16px]   bg-blue-500 text-white dark:bg-slate-900 dark:text-slate-300">
                       Balance: NGN {balance}
                     </Button>
                   </DropdownItem>
                   <DropdownItem key="profile" className="h-14 gap-2">
-                    <p className="font-semibold font-[sans, Helvetica, Montserrat]">
+                    <p className="font-semibold ">
                       {user.surname + user.other_name}
                     </p>
-                    <p className="font-semibold font-[sans, Helvetica, Montserrat]">
-                      {user.email}
-                    </p>
+                    <p className="font-semibold ">{user.email}</p>
                   </DropdownItem>
                   <DropdownItem key="team_settings">Invoice</DropdownItem>
 
-                  <DropdownItem key="payment">Paymenet</DropdownItem>
+                  <DropdownItem key="payment">Payment</DropdownItem>
                   <DropdownItem key="settings">My Settings</DropdownItem>
                   <DropdownItem onClick={Logout} key="logout" color="danger">
                     Log Out
@@ -204,25 +205,126 @@ export const Navbar = () => {
         <NavbarMenuToggle />
       </NavbarContent>
 
-      <NavbarMenu>
-        <div className="flex flex-col gap-2 mx-4 mt-2">
-          {siteConfig.navMenuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item}-${index}`}>
+      <NavbarMenu className="w-full flex flex-row items-center ">
+        <div className="w-full rounded-md p-12  dark:shadow-zinc-900 shadow-2xl flex  justify-between space-x-[100px] -mt-[400px] ">
+          <NavbarContent className=" sm:hidden basis-1" justify="end">
+            <NavbarItem className="flex">
+              {user && user.matric_number ? (
+                <>
+                  <Dropdown placement="bottom-end">
+                    <DropdownTrigger>
+                      <User
+                        name={user.surname}
+                        description={user.department}
+                        avatarProps={{
+                          src: "https://i.pravatar.cc/150?u=a04258114e29026702d",
+                        }}
+                      />
+                    </DropdownTrigger>
+                    <DropdownMenu
+                      aria-label="Profile Actions"
+                      variant="flat"
+                      className="font-sans"
+                    >
+                      <DropdownItem key="balanced" className="h-14 gap-2">
+                        <Button className="w-full text-[16px]   bg-blue-500 text-white dark:bg-slate-900 dark:text-slate-300">
+                          Balance: NGN {balance}
+                        </Button>
+                      </DropdownItem>
+                      <DropdownItem key="profile" className="h-14 gap-2">
+                        <p className="font-semibold ">
+                          {user.surname + user.other_name}
+                        </p>
+                        <p className="font-semibold ">{user.email}</p>
+                      </DropdownItem>
+                      <DropdownItem key="team_settings">Invoice</DropdownItem>
+
+                      <DropdownItem key="payment">Paymenet</DropdownItem>
+                      <DropdownItem key="settings">My Settings</DropdownItem>
+                      <DropdownItem
+                        onClick={Logout}
+                        key="logout"
+                        color="danger"
+                      >
+                        Log Out
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
+                </>
+              ) : (
+                <Button
+                  isExternal
+                  as={Link}
+                  className="text-sm font-normal text-default-600 bg-default-100"
+                  href={"/auth/login"}
+                  // startContent={< className="text-danger" />}
+                  variant="flat"
+                >
+                  Login
+                </Button>
+              )}
+            </NavbarItem>
+          </NavbarContent>
+
+          {user && user.matric_number ? (
+            <div className="flex flex-col gap-2 mx-4 mt-2">
+              {siteConfig.navMenuItems.map((item, index) => (
+                <NavbarMenuItem key={`${item}-${index}`}>
+                  <Link
+                    color={
+                      window.location.href.includes(item.href)
+                        ? "danger"
+                        : "foreground"
+                    }
+                    href="#"
+                    size="lg"
+                  >
+                    {item.label}
+                  </Link>
+                </NavbarMenuItem>
+              ))}
+              <Button onClick={Logout} key="logout" color="danger">
+                Logout
+              </Button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2 mx-4 mt-2">
               <Link
                 color={
-                  index === 2
-                    ? "primary"
-                    : index === siteConfig.navMenuItems.length - 1
-                      ? "danger"
-                      : "foreground"
+                  !window.location.href.includes("/login") &&
+                  !window.location.href.includes("/signup")
+                    ? "danger"
+                    : "foreground"
                 }
-                href="#"
+                href="/"
                 size="lg"
               >
-                {item.label}
+                Home
               </Link>
-            </NavbarMenuItem>
-          ))}
+              <Link
+                color={
+                  window.location.href.includes("/login")
+                    ? "danger"
+                    : "foreground"
+                }
+                href="/auth/login"
+                size="lg"
+              >
+                Login
+              </Link>
+              <Link
+                color={
+                  window.location.href.includes("/signup")
+                    ? "danger"
+                    : "foreground"
+                }
+                href="/auth/signup"
+                size="lg"
+              >
+                Signup
+              </Link>
+            </div>
+          )}
         </div>
       </NavbarMenu>
     </NextUINavbar>
