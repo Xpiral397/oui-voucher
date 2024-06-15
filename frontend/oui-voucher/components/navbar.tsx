@@ -209,7 +209,7 @@ export const Navbar = () => {
       </NavbarContent>
 
       <NavbarMenu className="w-full flex flex-row items-center ">
-        <div className="w-full rounded-md p-12  dark:shadow-zinc-900 shadow-2xl flex  justify-between space-x-[100px] -mt-[400px] ">
+        <div className="w-full rounded-md p-12  dark:shadow-zinc-900 shadow-2xl flex  justify-between space-x-[70px] -mt-[400px] ">
           <NavbarContent className=" sm:hidden basis-1" justify="end">
             <NavbarItem className="flex">
               {user && user.matric_number ? (
