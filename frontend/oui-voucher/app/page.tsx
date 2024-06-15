@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "@nextui-org/link";
 import {
   PlusIcon,
@@ -12,6 +12,8 @@ import {
 } from "@heroicons/react/outline";
 import { OnlinePredictionRounded } from "@mui/icons-material";
 import Logo from "@/public/logo.png";
+import { useUserContext } from "@/contexts/users/userUser";
+import { Button } from "@nextui-org/button";
 
 export const FeatureCard = ({ title, description, icon }: any) => {
   return (
@@ -92,6 +94,7 @@ export const FeaturesSection = () => {
 };
 
 const Page = () => {
+  const { user, setUser } = useContext(useUserContext);
   return (
     <div className="bg-white dark:bg-gray-900 min-h-screen">
       {/* <header className="flex justify-between items-center py-4 px-6 bg-gray-100 dark:bg-gray-800">
@@ -120,21 +123,54 @@ const Page = () => {
           </p>
           <div className="w-full flex sm:flex-row flex-col sm:space-x-0 space-x-2">
             {" "}
-            <a href="/auth/signup" className="w-full">
-              {" "}
-              <div className="w-full bg-gradient-to-r from-slate-900 to-purple-500 p-[1px] rounded-md mb-4">
-                <button className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-md w-full py-4 shadow-xl drop-shadow-2xl text-gray-300 font-bold">
-                  Get Started
-                </button>
-              </div>
+            <a
+              href={
+                (user &&
+                  ((user.matric_number && "/dashboard") || "/auth/signup")) ??
+                "#"
+              }
+              className="w-full"
+            >
+              {user ? (
+                <div className="w-full bg-gradient-to-r from-slate-900 to-purple-500 p-[1px] rounded-md mb-4">
+                  <button className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-md w-full py-4 shadow-xl drop-shadow-2xl text-gray-300 font-bold">
+                    Get Started
+                  </button>
+                </div>
+              ) : (
+                <Button
+                  isLoading={true}
+                  className="bg-gradient-to-r  from-blue-500  to-purple-500  rounded-md w-full py-4 shadow-sm drop-shadow-sm text-gray-400 font-bold"
+                >
+                  Loading...
+                </Button>
+              )}
             </a>
-            <a href="/auth/login" className="w-full">
-              <div className="w-full bg-gradient-to-r p-[1px] rounded-md">
-                <button className="bg-gradient-to-r  from-blue-500  to-purple-500  rounded-md w-full py-4 shadow-sm drop-shadow-sm text-gray-400 font-bold">
-                  Login
-                </button>
-              </div>
-            </a>
+            {user && !user.matric_number ? (
+              <a
+                href={
+                  (user &&
+                    ((user.matric_number && "/auth/login") || "/auth/login")) ??
+                  "#"
+                }
+                className="w-full"
+              >
+                <div className="w-full bg-gradient-to-r p-[1px] rounded-md">
+                  <button className="bg-gradient-to-r  from-blue-500  to-purple-500  rounded-md w-full py-4 shadow-sm drop-shadow-sm text-gray-400 font-bold">
+                    Login
+                  </button>
+                </div>
+              </a>
+            ) : (
+              !user && (
+                <Button
+                  isLoading={true}
+                  className="bg-gradient-to-r  from-blue-500  to-purple-500  rounded-md w-full py-4 shadow-sm drop-shadow-sm text-gray-400 font-bold"
+                >
+                  Loading...
+                </Button>
+              )
+            )}
           </div>
         </div>
 
