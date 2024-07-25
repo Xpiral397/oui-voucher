@@ -36,7 +36,9 @@ interface Fee {
 }
 
 const Icon = {
-  Hostel: <HomeIcon className="w-5 h-5 text-primary-500" color="primary" />,
+  "Hostel Fee": (
+    <HomeIcon className="w-5 h-5 text-primary-500" color="primary" />
+  ),
   Tuition: <School className="w-5 h-5" color="primary" />,
   School: <School className="w-5 h-5" color="primary" />,
   Malpractice: <LocalPolice className="w-5 h-5" color="primary" />,
@@ -115,33 +117,21 @@ export function Page() {
       // icon: <LocalPolice className="w-5 h-5" color="primary" />,
     },
     {
-      name: "Medical",
+      name: "Medical Fee",
       amount: 10000,
       editable: true,
       // icon: <MedicalServices className="w-5 h-5" color="primary" />,
     },
     {
-      name: "Practical",
+      name: "Practical Fee",
       amount: 50000,
-      editable: true,
-      // icon: <LocalPolice className="w-5 h-5" color="primary" />,
-    },
-    {
-      name: "Clearance",
-      amount: 250000,
       editable: true,
       // icon: <LocalPolice className="w-5 h-5" color="primary" />,
     },
 
     {
-      name: "Exemption",
+      name: "Exemption Fee",
       amount: 26000,
-      editable: true,
-      // icon: <LocalPolice className="w-5 h-5" color="primary" />,
-    },
-    {
-      name: "other",
-      amount: 0,
       editable: true,
       // icon: <LocalPolice className="w-5 h-5" color="primary" />,
     },

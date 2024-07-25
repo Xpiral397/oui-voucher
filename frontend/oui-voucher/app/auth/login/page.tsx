@@ -192,9 +192,9 @@ export default function SiginCar() {
           <div className="flex items-center space-x-4">
             <div className="w-full">
               <p className="w-full font-[400] shadow-md  dark:bg-gray-800 rounded-lg py-4 px-2 text-blue-900 dark:text-gray-500">
-                Payment Management Vocher System
+                OUI Payment Portal
                 <p className="font-[400] text-sm text-blue-900 dark:text-gray-200">
-                  Oduduwa University
+                  Oduduwa University Ipetumodu
                 </p>
               </p>
             </div>

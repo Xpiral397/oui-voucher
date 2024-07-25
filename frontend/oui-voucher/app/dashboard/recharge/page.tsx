@@ -95,6 +95,7 @@ export function PaymentVoucher() {
           toast.error("This voucher has been used by you");
         } else if (response.status == 200) {
           toast.success("Voucher loaded successfully");
+          setReferenceId('')
           setDashBoard((e) =>
             e ? { ...e, balance: response.data.balance } : e
           );
