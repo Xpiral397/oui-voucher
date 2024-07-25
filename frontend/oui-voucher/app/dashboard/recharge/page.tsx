@@ -95,10 +95,8 @@ export function PaymentVoucher() {
           toast.error("This voucher has been used by you");
         } else if (response.status == 200) {
           toast.success("Voucher loaded successfully");
-          setReferenceId('')
-          setDashBoard((e) =>
-            e ? { ...e, balance: response.data.balance } : e
-          );
+          setReferenceId("");
+          setDashBoard((e: any) => ({ ...e, balance: response.data.balance }));
         } else if (response.status == 400) {
           toast.error("This voucher does not exist");
         }

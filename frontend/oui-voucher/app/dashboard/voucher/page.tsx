@@ -19,9 +19,7 @@ export function MyDashBoardAACount() {
   const { user } = useContext(useUserContext);
   const { dashboard, setDashBoard } = useContext(useDashBoardContext);
   const setHide = () => {
-    setDashBoard((e) =>
-      e ? { ...e, hideBalance: !dashboard?.hideBalance } : e
-    );
+    setDashBoard((e: any) => ({ ...e, hideBalance: !dashboard?.hideBalance }));
   };
   return (
     <div className="flex flex-col w-full p-4 font-[Helvtica] tracking-wide text-warning-foreground">

@@ -49,7 +49,7 @@ export function UseDashBoard({ children }: { children: ReactNode }) {
         }
       })
       .then((data) => {
-        setDashBoard((e) => (e ? { ...e, balance: data.balance } : e));
+        setDashBoard((e) => ({ ...e, balance: data.balance }) as any);
 
         // localStorage.setItem("balance", data?.balance);
       });
