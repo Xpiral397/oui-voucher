@@ -44,12 +44,16 @@ import { useUserContext } from "@/contexts/users/userUser";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { User as Users } from "@/contexts/types";
+import { useAdminContext } from "@/contexts/users/useAdmin";
+import { verifyLatPaymentReference } from "@/app/paystacks/route";
 export const Navbar = () => {
   const { setting, setSettings } = useContext(settingContext);
   const [windows, setWindow] = useState<string>("");
   const [balance, setBalance] = useState(0.0);
   const { user, setUser } = useContext(useUserContext);
+  const { admin, setAdmin } = useContext(useAdminContext);
   const router = useRouter();
+  // consoe.log(admin);
 
   const Logout = () => {
     router.push("/auth/login");
@@ -64,43 +68,9 @@ export const Navbar = () => {
   };
   useEffect(() => {
     setWindow(window.location.href);
+    console.log(admin, "Kop");
   });
-  useEffect(() => {
-    if (window.location.href.includes("dashboard")) {
-      const timer = setTimeout(() => {
-        window.location.reload();
-      }, 60000);
 
-      return () => clearTimeout(timer);
-    }
-  }, []);
-  useEffect(() => {
-    if (window.location.href.includes("dashboard")) {
-      (async () => {
-        fetch(`${base}/voucher/get-balance`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "appliation/json",
-            authorization: `Token ${getToken()}`,
-          },
-        })
-          .then((data) => {
-            if (data.ok) {
-              // toast.success("User balnce fetched successfully");
-              const data_ = data.json();
-              return data_;
-            } else {
-              toast.error("Unable to  fetch user balnce ");
-            }
-          })
-          .then((data) => {
-            setBalance((e) => {
-              return data?.balance;
-            });
-          });
-      })();
-    }
-  });
   return (
     <NextUINavbar
       maxWidth="full"
@@ -167,12 +137,7 @@ export const Navbar = () => {
                   variant="flat"
                   className="font-sans"
                 >
-                  <DropdownItem key="balanced" className="h-14 gap-2">
-                    <Button className="w-full text-[16px]   bg-blue-500 text-white dark:bg-slate-900 dark:text-slate-300">
-                      Balance: NGN {balance}
-                    </Button>
-                  </DropdownItem>
-                  <DropdownItem key="profile" className="h-14 gap-2">
+                  <DropdownItem key="profile" className="gap-2 h-14">
                     <p className="font-semibold ">
                       {user.surname + user.other_name}
                     </p>
@@ -180,6 +145,40 @@ export const Navbar = () => {
                   </DropdownItem>
                   <DropdownItem key="team_settings">Invoice</DropdownItem>
 
+                  <DropdownItem key="payment">Payment</DropdownItem>
+                  <DropdownItem key="settings">My Settings</DropdownItem>
+                  <DropdownItem onClick={Logout} key="logout" color="danger">
+                    Log Out
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            </>
+          ) : admin && admin.email ? (
+            <>
+              <Dropdown placement="bottom-end">
+                <DropdownTrigger>
+                  <User
+                    name={admin.username}
+                    description={"Administrator"}
+                    avatarProps={{
+                      src: "https://i.pravatar.cc/150?u=a04258114e29026702d",
+                    }}
+                  />
+                </DropdownTrigger>
+                <DropdownMenu
+                  aria-label="Profile Actions"
+                  variant="flat"
+                  className="font-sans"
+                >
+                  <DropdownItem key="balanced" className="gap-2 h-14">
+                    <Button className="w-full text-[16px]   bg-blue-500 text-white dark:bg-slate-900 dark:text-slate-300">
+                      Balance: NGN Virtual Account
+                    </Button>
+                  </DropdownItem>
+                  <DropdownItem key="profile" className="gap-2 h-14">
+                    <p className="font-semibold ">{admin.email}</p>
+                  </DropdownItem>
+                  <DropdownItem key="team_settings">Invoice</DropdownItem>
                   <DropdownItem key="payment">Payment</DropdownItem>
                   <DropdownItem key="settings">My Settings</DropdownItem>
                   <DropdownItem onClick={Logout} key="logout" color="danger">
@@ -208,64 +207,112 @@ export const Navbar = () => {
         <NavbarMenuToggle />
       </NavbarContent>
 
-      <NavbarMenu className="w-full flex flex-row items-center ">
+      <NavbarMenu className="flex flex-row items-center w-full ">
         <div className="w-full rounded-md p-12  dark:shadow-zinc-900 shadow-2xl flex  justify-between space-x-[70px] -mt-[400px] ">
           <NavbarContent className=" sm:hidden basis-1" justify="end">
             <NavbarItem className="flex">
-              {user && user.matric_number ? (
-                <>
-                  <Dropdown placement="bottom-end">
-                    <DropdownTrigger>
-                      <User
-                        name={user.surname}
-                        description={user.department}
-                        avatarProps={{
-                          src: "https://i.pravatar.cc/150?u=a04258114e29026702d",
-                        }}
-                      />
-                    </DropdownTrigger>
-                    <DropdownMenu
-                      aria-label="Profile Actions"
-                      variant="flat"
-                      className="font-sans"
-                    >
-                      <DropdownItem key="balanced" className="h-14 gap-2">
-                        <Button className="w-full text-[16px]   bg-blue-500 text-white dark:bg-slate-900 dark:text-slate-300">
-                          Balance: NGN {balance}
-                        </Button>
-                      </DropdownItem>
-                      <DropdownItem key="profile" className="h-14 gap-2">
-                        <p className="font-semibold ">
-                          {user.surname + user.other_name}
-                        </p>
-                        <p className="font-semibold ">{user.email}</p>
-                      </DropdownItem>
-                      <DropdownItem key="team_settings">Invoice</DropdownItem>
+              {(() => {
+                if (user && user.matric_number) {
+                  return (
+                    <>
+                      <Dropdown placement="bottom-end">
+                        <DropdownTrigger>
+                          <User
+                            name={user.surname}
+                            description={user.department}
+                            avatarProps={{
+                              src: "https://i.pravatar.cc/150?u=a04258114e29026702d",
+                            }}
+                          />
+                        </DropdownTrigger>
+                        <DropdownMenu
+                          aria-label="Profile Actions"
+                          variant="flat"
+                          className="font-sans"
+                        >
+                          <DropdownItem key="profile" className="gap-2 h-14">
+                            <p className="font-semibold ">
+                              {user.surname + user.other_name}
+                            </p>
+                            <p className="font-semibold ">{user.email}</p>
+                          </DropdownItem>
+                          <DropdownItem key="team_settings">
+                            Invoice
+                          </DropdownItem>
 
-                      <DropdownItem key="payment">Paymenet</DropdownItem>
-                      <DropdownItem key="settings">My Settings</DropdownItem>
-                      <DropdownItem
-                        onClick={Logout}
-                        key="logout"
-                        color="danger"
-                      >
-                        Log Out
-                      </DropdownItem>
-                    </DropdownMenu>
-                  </Dropdown>
-                </>
-              ) : (
-                <Button
-                  isExternal
-                  as={Link}
-                  className="text-sm font-normal text-default-600 bg-default-100"
-                  href={"/auth/login"}
-                  // startContent={< className="text-danger" />}
-                  variant="flat"
-                >
-                  Login
-                </Button>
-              )}
+                          <DropdownItem key="payment">Paymenet</DropdownItem>
+                          <DropdownItem key="settings">
+                            My Settings
+                          </DropdownItem>
+                          <DropdownItem
+                            onClick={Logout}
+                            key="logout"
+                            color="danger"
+                          >
+                            Log Out
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </Dropdown>
+                    </>
+                  );
+                } else if (admin && admin.email) {
+                  return (
+                    <>
+                      <Dropdown placement="bottom-end">
+                        <DropdownTrigger>
+                          <User
+                            name={admin.username}
+                            description={"Administrator"}
+                            avatarProps={{
+                              src: "https://i.pravatar.cc/150?u=a04258114e29026702d",
+                            }}
+                          />
+                        </DropdownTrigger>
+                        <DropdownMenu
+                          aria-label="Profile Actions"
+                          variant="flat"
+                          className="font-sans"
+                        >
+                          <DropdownItem key="balanced" className="gap-2 h-14">
+                            <Button className="w-full text-[16px]   bg-blue-500 text-white dark:bg-slate-900 dark:text-slate-300">
+                              Balance: Virtual Account
+                            </Button>
+                          </DropdownItem>
+                          <DropdownItem key="profile" className="gap-2 h-14">
+                            <p className="font-semibold ">{admin?.email}</p>
+                          </DropdownItem>
+                          <DropdownItem key="team_settings">
+                            Invoice
+                          </DropdownItem>
+
+                          <DropdownItem key="payment">Payment</DropdownItem>
+                          <DropdownItem key="settings">
+                            My Settings
+                          </DropdownItem>
+                          <DropdownItem
+                            onClick={Logout}
+                            key="logout"
+                            color="danger"
+                          >
+                            Log Out
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </Dropdown>
+                    </>
+                  );
+                } else {
+                  <Button
+                    isExternal
+                    as={Link}
+                    className="text-sm font-normal text-default-600 bg-default-100"
+                    href={"/auth/login"}
+                    // startContent={< className="text-danger" />}
+                    variant="flat"
+                  >
+                    Login
+                  </Button>;
+                }
+              })()}
             </NavbarItem>
           </NavbarContent>
 

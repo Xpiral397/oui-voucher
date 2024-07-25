@@ -47,3 +47,9 @@ class UserSerializer(BaseUserSerializer):
             "is_student",
             "is_admin",
         )
+
+
+class AdminSerializer(serializers.Serializer):
+    class Meta:
+        model = CustomUser
+        fields = "__all__"

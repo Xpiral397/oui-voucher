@@ -45,74 +45,6 @@ const Icon = {
   Practical: <LocalPolice className="w-5 h-5" color="primary" />,
   Other: <LocalPolice className="w-5 h-5" color="primary" />,
 };
-const predefinedFees: Fee[] = [
-  {
-    name: "Hostel",
-    amount: 100000,
-    editable: true,
-  },
-  {
-    name: "Tuition",
-    amount: 200000,
-    editable: true,
-    // icon: <School className="w-5 h-5" color="primary" />,
-  },
-  {
-    name: "School",
-    amount: 150000,
-    editable: true,
-    // icon: <School className="w-5 h-5" color="primary" />,
-  },
-  {
-    name: "Malpractice",
-    amount: 50000,
-    editable: true,
-    // icon: <LocalPolice className="w-5 h-5" color="primary" />,
-  },
-  {
-    name: "Medical",
-    amount: 30000,
-    editable: true,
-    // icon: <MedicalServices className="w-5 h-5" color="primary" />,
-  },
-  {
-    name: "X-ray",
-    amount: 20000,
-    editable: true,
-    // icon: <LocalPolice className="w-5 h-5" color="primary" />,
-  },
-  {
-    name: "Practical",
-    amount: 40000,
-    editable: true,
-    // icon: <LocalPolice className="w-5 h-5" color="primary" />,
-  },
-  {
-    name: "Clearance",
-    amount: 25000,
-    editable: true,
-    // icon: <LocalPolice className="w-5 h-5" color="primary" />,
-  },
-  {
-    name: "Text Books",
-    amount: 10000,
-    editable: true,
-    // icon: <LocalPolice className="w-5 h-5" color="primary" />,
-  },
-  {
-    name: "Departmental",
-    amount: 15000,
-    editable: true,
-    // icon: <LocalPolice className="w-5 h-5" color="primary" />,
-  },
-  {
-    name: "Exemption",
-    amount: 50000,
-    editable: true,
-    // icon: <LocalPolice className="w-5 h-5" color="primary" />,
-  },
-  // Add more fees as needed
-];
 
 const fetchExternalUserCheck = async (userId: string) => {
   const toast_id = toast.loading("fetching external stundent");
@@ -138,6 +70,82 @@ const fetchExternalUser = async (userId: string) => {
 };
 
 export function Page() {
+  const [predefinedFees, setPredefine] = useState<Fee[]>([
+    {
+      name: "Maye Hostel",
+      amount: 98000,
+      editable: true,
+    },
+    {
+      name: "Oyetade Hostel",
+      amount: 69000,
+      editable: true,
+    },
+    {
+      name: "Adeline Hostel",
+      amount: 98000,
+      editable: true,
+    },
+    {
+      name: "Moremi Hostel",
+      amount: 98000,
+      editable: true,
+    },
+    {
+      name: "IOA Hostel",
+      amount: 69000,
+      editable: true,
+    },
+    {
+      name: "Moremi Hostel",
+      amount: 98000,
+      editable: true,
+    },
+    {
+      name: "Tuition Fee",
+      amount: 185000,
+      editable: true,
+      // icon: <School className="w-5 h-5" color="primary" />,
+    },
+
+    {
+      name: "Malpractice",
+      amount: 50000,
+      editable: true,
+      // icon: <LocalPolice className="w-5 h-5" color="primary" />,
+    },
+    {
+      name: "Medical",
+      amount: 10000,
+      editable: true,
+      // icon: <MedicalServices className="w-5 h-5" color="primary" />,
+    },
+    {
+      name: "Practical",
+      amount: 50000,
+      editable: true,
+      // icon: <LocalPolice className="w-5 h-5" color="primary" />,
+    },
+    {
+      name: "Clearance",
+      amount: 250000,
+      editable: true,
+      // icon: <LocalPolice className="w-5 h-5" color="primary" />,
+    },
+
+    {
+      name: "Exemption",
+      amount: 26000,
+      editable: true,
+      // icon: <LocalPolice className="w-5 h-5" color="primary" />,
+    },
+    {
+      name: "other",
+      amount: 0,
+      editable: true,
+      // icon: <LocalPolice className="w-5 h-5" color="primary" />,
+    },
+  ]);
   const router = useRouter();
   const { user } = useContext(useUserContext);
 
@@ -164,6 +172,8 @@ export function Page() {
   const [externalUserId, setExternalUserId] = useState<string>("");
   const [externalUser, setExternalUser] = useState<any>(null);
   const [values, setValues] = React.useState<Selection>(new Set([]));
+  const [newListName, setNewListName] = useState<string>("");
+  const [newListAmount, setNewListAmmount] = useState<number>(0);
 
   useEffect(() => {
     if (isPayingForAnother) {
@@ -200,12 +210,31 @@ export function Page() {
     }
   }, [externalUserId]);
 
+  const addNewFee = () => {
+    if (newListAmount === 0 || newListName === "") {
+      return;
+    }
+    const key = [];
+    for (let fee of predefinedFees) {
+      if (newListName === fee.name) {
+        toast.error("Fee  Name already exist");
+        return;
+      }
+    }
+    setPredefine((e) => [
+      ...e,
+      ...[{ name: newListName, amount: newListAmount, editable: true }],
+    ]);
+    toast.success("New fee added successfully");
+    setNewListName("");
+    setNewListAmmount(0);
+  };
   const createVoucher = async () => {
     // Validation
     const missingFields: string[] = [];
-    if (!voucherName) missingFields.push("Voucher Name");
-    if (!dateRange.start) missingFields.push("Start Date");
-    if (!dateRange.end) missingFields.push("End Date");
+    // if (!voucherName) missingFields.push("Voucher Name");
+    // if (!dateRange.start) missingFields.push("Start Date");
+    // if (!dateRange.end) missingFields.push("End Date");
     if (fees.length === 0) missingFields.push("Fees");
     if (!name) missingFields.push("Name");
     if (!email) missingFields.push("Email");
@@ -314,78 +343,23 @@ export function Page() {
   }, [fees]);
 
   return (
-    <div className="bg-white dark:bg-gray-900 min-h-screen p-6">
-      <header className="flex justify-between items-center py-4 px-6 bg-white rounded-md shadow-md dark:bg-gray-800">
+    <div className="min-h-screen p-6 bg-white dark:bg-gray-900">
+      <header className="flex items-center justify-between px-6 py-4 bg-white rounded-md shadow-md dark:bg-gray-800">
         <h1 className="text-xl font-bold text-gray-900 dark:text-white">
           Add New Voucher
         </h1>
       </header>
 
-      <main className="flex flex-col items-center mt-10 mx-auto max-w-4xl w-full">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full">
-          <div className="w-full flex space-x-0 sm:flex-row flex-col sm:space-x-2">
-            <div className="mb-4 w-2/3">
-              <label className="block text-gray-700 dark:text-gray-300">
-                Voucher Name
-              </label>
-              <input
-                type="text"
-                value={voucherName}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setVoucherName(e.target.value)
-                }
-                className="w-full p-2 mt-2 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
-              />
-            </div>
-            <div className="mb-4 w-full">
-              <label className="block text-gray-700 dark:text-gray-300">
-                Voucher ID
-              </label>
-              <input
-                type="text"
-                value={"2GMX6Y782WQTy"}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setVoucherName(e.target.value)
-                }
-                className="w-full p-2 mt-2 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
-              />
-            </div>
-          </div>
+      <main className="flex flex-col items-center w-full max-w-4xl mx-auto mt-10">
+        <div className="w-full p-6 bg-white rounded-lg shadow-lg dark:bg-gray-800">
+          <div className="flex flex-col w-full space-x-0 sm:flex-row sm:space-x-2"></div>
 
-          <div className="mb-4 flex space-x-4">
-            <div className="flex-1">
-              <label className="block text-gray-700 dark:text-gray-300">
-                Start Date
-              </label>
-              <input
-                type="date"
-                value={dateRange.start}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setDateRange({ ...dateRange, start: e.target.value })
-                }
-                className="w-full p-2 mt-2 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block text-gray-700 dark:text-gray-300">
-                End Date
-              </label>
-              <input
-                type="date"
-                value={dateRange.end}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setDateRange({ ...dateRange, end: e.target.value })
-                }
-                className="w-full p-2 mt-2 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
-              />
-            </div>
-          </div>
-          <label className="text-right block text-gray-700 dark:text-gray-300">
+          <label className="block text-right text-gray-700 dark:text-gray-300">
             User Credentials
           </label>
           <Divider />
 
-          <div className="mb-5 mt-5 ">
+          <div className="mt-5 mb-5 ">
             <div className="mb-4">
               <label className="block text-gray-700 dark:text-gray-300">
                 Name
@@ -394,7 +368,7 @@ export function Page() {
                 type="text"
                 value={name}
                 disabled
-                className="w-full p-2 mt-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
+                className="w-full p-2 mt-2 text-gray-900 bg-gray-200 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"
               />
             </div>
 
@@ -406,10 +380,10 @@ export function Page() {
                 type="email"
                 value={email}
                 disabled
-                className="w-full p-2 mt-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
+                className="w-full p-2 mt-2 text-gray-900 bg-gray-200 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"
               />
             </div>
-            <div className="flex items-center space-x-3 w-full">
+            <div className="flex items-center w-full space-x-3">
               <div className="mb-4">
                 <label className="block text-gray-700 dark:text-gray-300">
                   Matriculation Number
@@ -418,11 +392,11 @@ export function Page() {
                   type="text"
                   value={matricNumber}
                   disabled
-                  className="w-full p-2 mt-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
+                  className="w-full p-2 mt-2 text-gray-900 bg-gray-200 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 />
               </div>
-              <div className="flex items-center space-x-3 w-full">
-                <div className="mb-4 w-full">
+              <div className="flex items-center w-full space-x-3">
+                <div className="w-full mb-4">
                   <label className="block text-gray-700 dark:text-gray-300">
                     Department
                   </label>
@@ -430,13 +404,13 @@ export function Page() {
                     type="text"
                     value={department}
                     disabled
-                    className="w-full p-2 mt-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
+                    className="w-full p-2 mt-2 text-gray-900 bg-gray-200 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"
                   />
                 </div>
               </div>
             </div>
-            <div className="flex items-center space-x-3 w-full">
-              <div className="mb-4 w-3/4">
+            <div className="flex items-center w-full space-x-3">
+              <div className="w-3/4 mb-4">
                 <label className="block text-gray-700 dark:text-gray-300">
                   Department
                 </label>
@@ -444,7 +418,7 @@ export function Page() {
                   type="text"
                   value={department}
                   disabled
-                  className="w-full p-2 mt-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
+                  className="w-full p-2 mt-2 text-gray-900 bg-gray-200 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 />
               </div>
 
@@ -456,10 +430,10 @@ export function Page() {
                   type="text"
                   value={level}
                   disabled
-                  className="w-full p-2 mt-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
+                  className="w-full p-2 mt-2 text-gray-900 bg-gray-200 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 />
               </div>
-              <div className="mb-4 w-1/4">
+              <div className="w-3/4 mb-4">
                 <label className="block text-gray-700 dark:text-gray-300">
                   Semester
                 </label>
@@ -467,29 +441,17 @@ export function Page() {
                   color={"secondary"}
                   value={Array.from(semester).join("")}
                   onSelectionChange={setSemester}
-                  className="w-full p-2 mt-2 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
+                  className="w-full p-2 mt-2 text-gray-900 bg-white border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 >
                   <SelectItem key={"1st"} value="">
-                    1st Semester
+                    1st
                   </SelectItem>
                   <SelectItem key={"2nd"} value="">
-                    2nd Semester
+                    2nd
                   </SelectItem>
                 </Select>
               </div>
             </div>
-          </div>
-
-          <label className="text-right block text-gray-700 dark:text-gray-300">
-            Paying for another student?
-          </label>
-          <Divider />
-
-          <div className="mb-4 mt-5 ">
-            <Switch
-              checked={isPayingForAnother}
-              onChange={() => setIsPayingForAnother(!isPayingForAnother)}
-            />
           </div>
 
           {isPayingForAnother && (
@@ -498,19 +460,19 @@ export function Page() {
                 <label className="block text-gray-700 dark:text-gray-300">
                   External User ID
                 </label>
-                <div className="mt-3 flex space-x-2 items-center">
+                <div className="flex items-center mt-3 space-x-2">
                   <input
                     type="text"
                     value={externalUserId}
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
                       setExternalUserId(e.target.value)
                     }
-                    className="w-full p-2 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
+                    className="w-full p-2 text-gray-900 bg-white border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"
                   />
                   <Button
                     color="primary"
                     onClick={handleAddFee}
-                    className="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-900"
+                    className="px-4 py-2 text-white bg-gray-700 rounded-md hover:bg-gray-900"
                   >
                     <SearchIcon
                       onClick={() => {
@@ -542,15 +504,46 @@ export function Page() {
           </label>
           <Divider />
 
+          <div className="flex space-x-3 mt-3 mb-3">
+            <input
+              type="name"
+              // max={fee.amount}
+              value={newListName}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setNewListName(e.target.value)
+              }
+              // disabled={!(fee.amount > 184000) || fee.name == "other"}
+              className="flex-1 p-2 text-gray-900 bg-white border border-gray-300 rounded-md dark:bg-gray-600 dark:text-white dark:border-gray-600"
+              placeholder="New Fee Name"
+            />
+            <input
+              type="number"
+              // max={fee.amount}
+              value={newListAmount}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setNewListAmmount(Number(e.target.value))
+              }
+              // disabled={!(fee.amount > 184000) || fee.name == "other"}
+              className="flex-1 p-2 text-gray-900 bg-white border border-gray-300 rounded-md dark:bg-gray-600 dark:text-white dark:border-gray-600"
+              placeholder="New Fee Name"
+            />
+            <button
+              onClick={addNewFee}
+              className="px-4 py-2 text-white bg-gray-700 rounded-md hover:bg-gray-900"
+            >
+              Add New Fee
+            </button>
+          </div>
+          <Divider />
           <div className="mb-4">
-            <div className="flex items-center space-x-2 mt-2">
+            <div className="flex items-center mt-2 space-x-2">
               <Select
                 // selectedKeys={values}
                 color="primary"
                 selectionMode="multiple"
                 onSelectionChange={setValues}
                 placeholder="Select a fee"
-                className="flex-1 p-2 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
+                className="flex-1 p-2 text-gray-900 bg-white border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"
               >
                 {predefinedFees.map((fee, index) => (
                   <SelectItem
@@ -565,9 +558,9 @@ export function Page() {
               </Select>
               <button
                 onClick={handleAddFee}
-                className="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-900"
+                className="px-4 py-2 text-white bg-gray-700 rounded-md hover:bg-gray-900"
               >
-                <PlusIcon className="h-5 w-5" />
+                <PlusIcon className="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -576,11 +569,11 @@ export function Page() {
             <label className="block text-gray-700 dark:text-gray-300">
               Selected Fees
             </label>
-            <div className="flex flex-col space-y-4 mt-2">
+            <div className="flex flex-col mt-2 space-y-4">
               {fees.map((fee, index) => (
                 <div
                   key={index}
-                  className="flex items-center space-x-4 bg-gray-200 dark:bg-gray-700 p-2 rounded-lg"
+                  className="flex items-center p-2 space-x-4 bg-gray-200 rounded-lg dark:bg-gray-700"
                 >
                   <span className="text-gray-900 dark:text-gray-200">
                     {fee.name}
@@ -592,15 +585,15 @@ export function Page() {
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
                       handleAmountChange(fee.name, e.target.value)
                     }
-                    disabled={fee.amount > 50000}
-                    className="flex-1 p-2 rounded-md bg-white dark:bg-gray-600 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
+                    disabled={!(fee.amount > 184000) || fee.name == "other"}
+                    className="flex-1 p-2 text-gray-900 bg-white border border-gray-300 rounded-md dark:bg-gray-600 dark:text-white dark:border-gray-600"
                     placeholder="Enter amount"
                   />
                   <button
                     onClick={() => handleRemoveFee(fee.name)}
                     className="text-red-500 dark:text-red-300 hover:text-red-700 dark:hover:text-red-500"
                   >
-                    <XIcon className="h-6 w-6" />
+                    <XIcon className="w-6 h-6" />
                   </button>
                 </div>
               ))}
@@ -612,29 +605,29 @@ export function Page() {
               Total Amount
             </label>
             <input
-              type="text"
-              value={totalAmount}
+              type="text text-secondary-500 font-[500] font-[Helvetica, sans-serif]"
+              value={"NGN " + totalAmount.toLocaleString()}
               disabled
-              className="w-full p-2 mt-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
+              className="w-full p-2 mt-2 text-gray-900 bg-gray-200 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"
             />
           </div>
-          <label className="text-right mt-3 block text-gray-700 dark:text-gray-300">
+          <label className="block mt-3 text-right text-gray-700 dark:text-gray-300">
             Action & Checks
           </label>
           <Divider />
 
-          <div className="mt-4 mb-4 flex space-x-2 w-full">
+          <div className="flex w-full mt-4 mb-4 space-x-2">
             <button
               onClick={calculateTotal}
-              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700"
+              className="px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-700"
             >
               Calculate Total
             </button>
             <button
               onClick={createVoucher}
-              className="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-900"
+              className="px-4 py-2 text-white bg-gray-700 rounded-md hover:bg-gray-900"
             >
-              Create Voucher
+              Pay Fee
             </button>
           </div>
         </div>

@@ -3,6 +3,11 @@ interface LoginForm {
   password: string;
 }
 
+interface AdminLoginFrom {
+  email: string;
+  password: string;
+}
+
 interface SignupForm {
   number: string;
   surname: string;

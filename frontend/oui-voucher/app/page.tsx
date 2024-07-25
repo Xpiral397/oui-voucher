@@ -18,9 +18,9 @@ import { Button } from "@nextui-org/button";
 export const FeatureCard = ({ title, description, icon }: any) => {
   return (
     <div className="flex flex-col items-center bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 m-4 w-[300px]">
-      <div className="text-blue-500 dark:text-blue-300 mb-4">{icon}</div>
-      <h3 className="text-lg font-bold mb-2 dark:text-white">{title}</h3>
-      <p className="text-gray-600 dark:text-gray-300 text-center">
+      <div className="mb-4 text-blue-500 dark:text-blue-300">{icon}</div>
+      <h3 className="mb-2 text-lg font-bold dark:text-white">{title}</h3>
+      <p className="text-center text-gray-600 dark:text-gray-300">
         {description}
       </p>
     </div>
@@ -32,51 +32,33 @@ export const FeaturesSection = () => {
     {
       title: "Add New Voucher",
       description: "Create new vouchers easily for payments.",
-      icon: <PlusIcon className="h-12 w-12" />,
+      icon: <PlusIcon className="w-12 h-12" />,
     },
+
     {
-      title: "Delete Voucher",
-      description: "Remove unused or expired vouchers.",
-      icon: <TrashIcon className="h-12 w-12" />,
-    },
-    {
-      title: "Archive Voucher",
-      description: "Archive old vouchers for record-keeping.",
-      icon: <ArchiveIcon className="h-12 w-12" />,
-    },
-    {
-      title: "View Used Vouchers",
+      title: "View Approved Vouchers",
       description: "Check the status of used vouchers.",
-      icon: <EyeIcon className="h-12 w-12" />,
+      icon: <EyeIcon className="w-12 h-12" />,
     },
     {
       title: "Generate PDF Invoice",
       description: "Create and download PDF invoices.",
-      icon: <DownloadIcon className="h-12 w-12" />,
+      icon: <DownloadIcon className="w-12 h-12" />,
     },
-    {
-      title: "Remote Payment",
-      description: "Facilitate remote payments seamlessly.",
-      icon: <OnlinePredictionRounded className="h-12 w-12" />,
-    },
+
     {
       title: "Transaction View",
       description: "View all transactions in one place.",
-      icon: <ClipboardListIcon className="h-12 w-12" />,
-    },
-    {
-      title: "Voucher Scope Selection",
-      description: "Select voucher scopes for different purposes.",
-      icon: <SelectorIcon className="h-12 w-12" />,
+      icon: <ClipboardListIcon className="w-12 h-12" />,
     },
   ];
 
   return (
     <div
-      className="rounded-lg shadow-xl bg-gray-100 dark:bg-gray-900 py-10"
+      className="py-10 bg-gray-100 rounded-lg shadow-xl dark:bg-gray-900"
       id="features"
     >
-      <h2 className="text-3xl font-bold text-center mb-8 dark:text-white">
+      <h2 className="mb-8 text-3xl font-bold text-center dark:text-white">
         Features
       </h2>
       <div className="flex flex-wrap justify-center">
@@ -96,8 +78,8 @@ export const FeaturesSection = () => {
 const Page = () => {
   const { user, setUser } = useContext(useUserContext);
   return (
-    <div className="bg-white dark:bg-gray-900 min-h-screen">
-      {/* <header className="flex justify-between items-center py-4 px-6 bg-gray-100 dark:bg-gray-800">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
+      {/* <header className="flex items-center justify-between px-6 py-4 bg-gray-100 dark:bg-gray-800">
         <img src={Logo.src} alt="Logo" className="h-10" />
         <nav className="space-x-4">
           <Link href="#features" className="text-gray-800 dark:text-gray-200">
@@ -109,11 +91,11 @@ const Page = () => {
         </nav>
       </header> */}
 
-      <main className="flex flex-col items-center mt-10 mx-auto max-w-6xl px-4">
-        <div className="text-center md:w-2/3 mb-20 mx-10">
-          <h1 className="dark:text-white text-slate-800 font-bold text-5xl mb-10">
+      <main className="flex flex-col items-center max-w-6xl px-4 mx-auto mt-10">
+        <div className="mx-10 mb-20 text-center md:w-2/3">
+          <h1 className="mb-10 text-5xl font-bold dark:text-white text-slate-800">
             Oduduwa Online
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">
               Voucher Payments
             </span>{" "}
             System
@@ -121,7 +103,7 @@ const Page = () => {
           <p className="text-sm text-gray-500 dark:text-gray-300 font-[400] text-center tracking-wide md:w-full w-[300px] mb-10">
             OUI Online Voucher School Fees Remote Payment.
           </p>
-          <div className="w-full flex sm:flex-row flex-col sm:space-x-0 space-x-2">
+          <div className="flex flex-col w-full space-x-2 sm:flex-row sm:space-x-0">
             {" "}
             <a
               href={
@@ -134,14 +116,14 @@ const Page = () => {
             >
               {user ? (
                 <div className="w-full bg-gradient-to-r from-slate-900 to-purple-500 p-[1px] rounded-md mb-4">
-                  <button className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-md w-full py-4 shadow-xl drop-shadow-2xl text-gray-300 font-bold">
+                  <button className="w-full py-4 font-bold text-gray-300 rounded-md shadow-xl bg-gradient-to-r from-blue-500 to-purple-500 drop-shadow-2xl">
                     Get Started
                   </button>
                 </div>
               ) : (
                 <Button
                   isLoading={true}
-                  className="bg-gradient-to-r mb-4 from-blue-500  to-purple-500  rounded-md w-full py-4 shadow-sm drop-shadow-sm text-gray-400 font-bold"
+                  className="w-full py-4 mb-4 font-bold text-gray-400 rounded-md shadow-sm bg-gradient-to-r from-blue-500 to-purple-500 drop-shadow-sm"
                 >
                   Loading...
                 </Button>
@@ -157,7 +139,7 @@ const Page = () => {
                 className="w-full"
               >
                 <div className="w-full bg-gradient-to-r p-[1px] rounded-md">
-                  <button className="bg-gradient-to-r  from-blue-500  to-purple-500  rounded-md w-full py-4 shadow-sm drop-shadow-sm text-gray-400 font-bold">
+                  <button className="w-full py-4 font-bold text-gray-400 rounded-md shadow-sm bg-gradient-to-r from-blue-500 to-purple-500 drop-shadow-sm">
                     Login
                   </button>
                 </div>
@@ -166,7 +148,7 @@ const Page = () => {
               !user && (
                 <Button
                   isLoading={true}
-                  className="bg-gradient-to-r  from-blue-500  to-purple-500  rounded-md w-full py-4 shadow-sm drop-shadow-sm text-gray-400 font-bold"
+                  className="w-full py-4 font-bold text-gray-400 rounded-md shadow-sm bg-gradient-to-r from-blue-500 to-purple-500 drop-shadow-sm"
                 >
                   Loading...
                 </Button>
@@ -178,8 +160,8 @@ const Page = () => {
         <FeaturesSection />
       </main>
 
-      <footer className=" mt-20 bg-gray-50 dark:bg-gray-800 py-6">
-        <div className="container mx-auto flex justify-between items-center px-4">
+      <footer className="py-6 mt-20 bg-gray-50 dark:bg-gray-800">
+        <div className="container flex items-center justify-between px-4 mx-auto">
           <img src={Logo.src} alt="Logo" className="h-10" />
           <p className="text-gray-800 dark:text-gray-200">
             &copy; 2024 Oduduwa Online. All rights reserved.

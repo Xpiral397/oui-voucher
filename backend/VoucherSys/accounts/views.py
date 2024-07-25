@@ -54,7 +54,7 @@ class ConfirmEmailView(generics.GenericAPIView):
 @permission_classes([IsAuthenticated])
 def get_user_by_matric_number(request):
     try:
-        user = User.objects.get(matric_number=request.data.get("id"))
+        user = User.objects.get(matric_number=request.data.get("matric_number"))
         serializer = UserSerializer(user)
         return Response(serializer.data)
     except User.DoesNotExist:

@@ -178,8 +178,8 @@ export default function SiginCar() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row items-center md:justify-between shadow-xl w-full h-full rounded-lg ">
-      <div className="flex justify-between w-full  text-left  flex-col md:-ml-40">
+    <div className="flex flex-col items-center w-full h-full rounded-lg shadow-xl md:flex-row md:justify-between ">
+      <div className="flex flex-col justify-between w-full text-left md:-ml-40">
         <div className="  md:space-y-1 bg-clip-text text-transparent bg-gradient-to-r text-center from-purple-800  via-orange-600 to-blue-500  font-sans font-[700] text-xl h-full lg:text-6xl  tracking-wider">
           <p>Get Started</p>
           <p>Signup Today</p>
@@ -195,7 +195,7 @@ export default function SiginCar() {
           </h1>
         </div>
       </div>
-      <div className="w-full flex flex-col h-full px-3 py-5  rounded-xl dark:bg-gray-900">
+      <div className="flex flex-col w-full h-full px-3 py-5 rounded-xl dark:bg-gray-900">
         <div className="flex items-center justify-center w-full">
           <form className="mx-auto sm:shadow-2xl p-5 rounded-xl max-w-[300px] lg:max-w-[450px] space-y-10 mt-10">
             <div className="flex flex-col justify-center w-full space-y-3">

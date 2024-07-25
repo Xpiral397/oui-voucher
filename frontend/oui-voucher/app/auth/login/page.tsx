@@ -260,7 +260,7 @@ export default function SiginCar() {
                 isLoading={loading}
                 className="bg-blue-700 dark:bg-gray-500 w-full text-white font-[700]"
               >
-                Sign Up
+                Login
               </Button>
             </form>
           </div>

@@ -19,31 +19,31 @@ export function Sidebar() {
         className={`${setting?.sidebar ? "hidden" : "flex"}  mx-1 flex-col justify-between rounded-xl h-screen w-[200px] shadow-2xl bg-slate-50 dark:bg-slate-900 text-blue-900 dark:text-slate-200`}
       >
         <div>
-          <div className="p-8 flex items-center justify-center">
+          <div className="flex items-center justify-center p-8">
             <h1 className="text-2xl font-bold">Dashboard</h1>
           </div>
           <Divider />
           <nav className="mt-10">
             <a
               href="/dashboard/voucher"
-              className="flex items-center p-4 text-blue-900 dark:text-slate-200 hover:bg-blue-200 dark:hover:bg-slate-700 transition-colors duration-200"
+              className="flex items-center p-4 text-blue-900 transition-colors duration-200 dark:text-slate-200 hover:bg-blue-200 dark:hover:bg-slate-700"
             >
-              <HomeIcon className="h-5 w-5 mr-3" />
+              <HomeIcon className="w-5 h-5 mr-3" />
               Vouchers
             </a>
 
             <a
-              href="#"
-              className="flex items-center p-4 text-blue-900 dark:text-slate-200 hover:bg-blue-200 dark:hover:bg-slate-700 transition-colors duration-200"
+              href="/dashboard/recharge"
+              className="flex items-center p-4 text-blue-900 transition-colors duration-200 dark:text-slate-200 hover:bg-blue-200 dark:hover:bg-slate-700"
             >
-              <CreditCardIcon className="h-5 w-5 mr-3" />
+              <CreditCardIcon className="w-5 h-5 mr-3" />
               Recharge
             </a>
             <a
               href="/dashboard/notifications"
-              className="flex items-center p-4 text-blue-900 dark:text-slate-200 hover:bg-blue-200 dark:hover:bg-slate-700 transition-colors duration-200"
+              className="flex items-center p-4 text-blue-900 transition-colors duration-200 dark:text-slate-200 hover:bg-blue-200 dark:hover:bg-slate-700"
             >
-              <BellIcon className="h-5 w-5 mr-3" />
+              <BellIcon className="w-5 h-5 mr-3" />
               Notification
             </a>
           </nav>
@@ -51,9 +51,9 @@ export function Sidebar() {
         <div className="mb-10">
           <a
             href="#"
-            className="flex items-center p-4 text-blue-900 dark:text-slate-200 hover:bg-blue-200 dark:hover:bg-slate-700 transition-colors duration-200"
+            className="flex items-center p-4 text-blue-900 transition-colors duration-200 dark:text-slate-200 hover:bg-blue-200 dark:hover:bg-slate-700"
           >
-            <CogIcon className="h-5 w-5 mr-3" />
+            <CogIcon className="w-5 h-5 mr-3" />
             Settings
           </a>
         </div>

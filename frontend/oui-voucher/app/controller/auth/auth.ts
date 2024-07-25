@@ -1,7 +1,9 @@
 import { base } from "@/base";
 
-export function getToken() {
-  return localStorage.getItem(Token);
+export function getToken(type: "User" | "Admin" = "User") {
+  return type == "User"
+    ? localStorage.getItem(Token)
+    : localStorage.getItem(AdminToken);
 }
 
 export async function createNewVoucher(payload: any) {
@@ -62,6 +64,44 @@ export async function Login(loginForm: LoginForm) {
           headers: {
             "Content-type": "application/json",
             Authorization: `Token ${auth_token.auth_token}`,
+          },
+          method: "GET",
+        });
+        if (res.ok) {
+          return { user: await res2.json() };
+        } else {
+          return 403;
+        }
+      } catch (e) {
+        console.log(e);
+        return 500;
+      }
+    } else {
+      return 403;
+    }
+  } catch (e) {
+    return 500;
+  }
+}
+
+export const AdminToken = "TOKEN:Admin:DATA:VCH";
+export async function AdminLogin(loginForm: AdminLoginFrom) {
+  try {
+    const res = await fetch(`${base}/voucher/admin/login/`, {
+      headers: {
+        "Content-type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(loginForm),
+    });
+    if (res.ok) {
+      const auth_token = await res.json();
+      localStorage.setItem(AdminToken, auth_token.token);
+      try {
+        const res2 = await fetch(`${base}/voucher/admin/me/`, {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Token ${auth_token.token}`,
           },
           method: "GET",
         });

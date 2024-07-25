@@ -4,21 +4,22 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.permissions import IsAuthenticated
-from .models import Voucher, Notification, Balance
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from .models import Voucher, Notification, Balance, Payment
 from .serializers import (
     VoucherCreateSerializer,
     VoucherSerializer,
     NotificationSerializer,
+    PaymentSerializer,
     BalanceSerializer,
+    PaymentRefrence,
     TransactionSerializer,
 )
+
 from accounts.models import CustomUser as User
-
 import random
-
-# views.py
-
+from .admin_view import *
+from .utilis import generate_token
 from django.shortcuts import get_object_or_404
 
 
@@ -29,15 +30,6 @@ def get_voucher_by_session_id(request, session_id):
     voucher = get_object_or_404(Voucher, session_id=session_id)
     serializer = VoucherSerializer(voucher)
     return Response(serializer.data)
-
-
-# Function to generate a random token
-def generate_token(length=26):
-    return "".join(
-        random.choices(
-            "OUIOUIPOUIPOIUIOIUUOOIUIOIUIOIUSSDREQA126373728393837", k=length
-        )
-    )
 
 
 def generate_transaction_id(length=26):
@@ -72,12 +64,19 @@ def create_voucher(request):
 
     # Calculate total amount
     total_amount = sum(fee["amount"] for fee in fees_data)
+    # print(total_amount, values)
 
     # Check if user's balance can afford the voucher
     user_balance = Balance.objects.get_or_create(user=creator)
     user_balance = Balance.objects.get(user=creator)
-    print(user_balance.balance)
-    if user_balance.balance < total_amount:
+    reference = Payment.objects.last()
+    if reference:
+        reference_id = reference.payment_sessionId
+        if user_balance.balance < total_amount:
+            return Response(
+                {"error": "Insufficient balance"}, status=status.HTTP_400_BAD_REQUEST
+            )
+    else:
         return Response(
             {"error": "Insufficient balance"}, status=status.HTTP_400_BAD_REQUEST
         )
@@ -85,31 +84,27 @@ def create_voucher(request):
     # Generate token and session ID
     token = generate_token()
     session_id = generate_token()
-    print(fees_data)
+    # print(fees_data)
 
     voucher_data = {
-        "voucher_name": data.get("voucherName"),
-        "start_date": data.get("dateRange").get("start"),
-        "end_date": data.get("dateRange").get("end"),
-        "encrypt_voucher": data.get("encryptVoucher"),
         "creator": request.user.pk,
-        "created_for": created_for.id if created_for else created_for,
         "semester": data.get("semester"),
         "total_amount": total_amount,
         "fees": fees_data,
         "values": values,
-        "token": token,
-        "creator_id": session_id,
-        "session_id": session_id,
+        "session_id": reference_id,
     }
+    print()
     serializer = VoucherCreateSerializer(data=voucher_data)
     # serializer.create()
-    if serializer.is_valid() or True:
+    if serializer.is_valid(raise_exception=True) or True:
         serializer.save()
         # if serializer.is_valid():
         # Handle balance deduction
         # balance = Balance.objects.get_or_create(user=user)
+        print(user_balance.balance)
         user_balance.balance -= total_amount
+        print(user_balance.balance)
         user_balance.save()
 
         # Create notification
@@ -221,3 +216,111 @@ def get_voucher_by_id(request, id):
         return Response(
             {"error": "Voucher not found."}, status=status.HTTP_404_NOT_FOUND
         )
+
+
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .models import Transaction
+from .serializers import TransactionSerializer
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def create_transaction_ref(request):
+    if request.method == "POST":
+        print(request.data)
+        serializer = PaymentRefrenceSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# views.py
+
+
+class VerifyPaymentView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def post(self, request, payment_id):
+        try:
+            payment = Payment.objects.get(id=payment_id)
+            payment.is_verified = True
+            payment.is_rejected = False
+            payment.save()
+            return Response({"status": "Payment verified"}, status=status.HTTP_200_OK)
+        except Payment.DoesNotExist:
+            return Response(
+                {"error": "Payment not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+
+class RejectPaymentView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def post(self, request, payment_id):
+        try:
+            payment = Payment.objects.get(id=payment_id)
+            payment.is_verified = False
+            payment.is_rejected = True
+            payment.save()
+            return Response({"status": "Payment rejected"}, status=status.HTTP_200_OK)
+        except Payment.DoesNotExist:
+            return Response(
+                {"error": "Payment not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+
+from rest_framework import status, generics
+
+
+class PaymentListView(generics.ListAPIView):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
+    permission_classes = [IsAdminUser]
+
+
+@api_view(["POST"])
+@permission_classes([IsAdminUser])
+def create_payment(request):
+    voucher = generate_token()
+    email = request.data.pop("email")
+    serializer = PaymentSerializer(data={**request.data, "generated_voucher": voucher})
+    # send_token_email()
+    if serializer.is_valid(raise_exception=True):
+        serializer.save()
+        send_token_email(email, voucher)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def recharge(request):
+    token = request.data.pop("token")
+    try:
+        obj = Payment.objects.get(generated_voucher=token)
+    except Payment.DoesNotExist:
+        return Response(
+            {"error": "Invalid voucher"}, status=status.HTTP_400_BAD_REQUEST
+        )
+    if obj.voucher_used:
+        return Response(
+            {"error": "Voucher already used"}, status=status.HTTP_409_CONFLICT
+        )
+    else:
+
+        if request.user.matric_number:
+            obj.voucher_used = True
+            balance = Balance.objects.get(user=request.user)
+            balance.balance += int(obj.amount)
+            balance.save()
+            request.user.save()
+            send_alert_email(request.user.email, obj.amount)
+            obj.save()
+            return Response(
+                {"status": "Voucher used successfully", "new_balance": balance.balance},
+                status=status.HTTP_200_OK,
+            )
+    return Response("Admin cannot recharge", status=status.HTTP_400_BAD_REQUEST)
