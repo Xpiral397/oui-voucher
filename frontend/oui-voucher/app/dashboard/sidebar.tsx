@@ -39,13 +39,13 @@ export function Sidebar() {
               <CreditCardIcon className="w-5 h-5 mr-3" />
               Recharge
             </a>
-            <a
+            {/* <a
               href="/dashboard/notifications"
               className="flex items-center p-4 text-blue-900 transition-colors duration-200 dark:text-slate-200 hover:bg-blue-200 dark:hover:bg-slate-700"
             >
               <BellIcon className="w-5 h-5 mr-3" />
               Notification
-            </a>
+            </a> */}
           </nav>
         </div>
         <div className="mb-10">

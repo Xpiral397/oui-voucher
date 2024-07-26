@@ -55,12 +55,22 @@ export const Navbar = () => {
   const router = useRouter();
   // consoe.log(admin);
 
-  const Logout = () => {
-    router.push("/auth/login");
-    toast.success("Logout sucessfully", {
-      autoClose: 5000,
-      position: "top-right",
-    });
+  const Logout = (isAdmin: boolean) => {
+    if (isAdmin) {
+      router.push("admin/auth/login");
+      localStorage.removeItem("BON::READER:Admin:DATA");
+      toast.success("Logout sucessfully", {
+        autoClose: 5000,
+        position: "top-right",
+      });
+    } else {
+      router.push("/auth/login");
+      localStorage.removeItem("BON::READER:USER:DATA");
+      toast.success("Logout sucessfully", {
+        autoClose: 5000,
+        position: "top-right",
+      });
+    }
 
     setUser((e) => {
       return { processing: true } as any;
@@ -147,7 +157,11 @@ export const Navbar = () => {
 
                   <DropdownItem key="payment">Payment</DropdownItem>
                   <DropdownItem key="settings">My Settings</DropdownItem>
-                  <DropdownItem onClick={Logout} key="logout" color="danger">
+                  <DropdownItem
+                    onClick={() => Logout(false)}
+                    key="logout"
+                    color="danger"
+                  >
                     Log Out
                   </DropdownItem>
                 </DropdownMenu>
@@ -181,7 +195,11 @@ export const Navbar = () => {
                   <DropdownItem key="team_settings">Invoice</DropdownItem>
                   <DropdownItem key="payment">Payment</DropdownItem>
                   <DropdownItem key="settings">My Settings</DropdownItem>
-                  <DropdownItem onClick={Logout} key="logout" color="danger">
+                  <DropdownItem
+                    onClick={() => Logout(true)}
+                    key="logout"
+                    color="danger"
+                  >
                     Log Out
                   </DropdownItem>
                 </DropdownMenu>
@@ -245,7 +263,7 @@ export const Navbar = () => {
                             My Settings
                           </DropdownItem>
                           <DropdownItem
-                            onClick={Logout}
+                            onClick={() => Logout(false)}
                             key="logout"
                             color="danger"
                           >
@@ -290,7 +308,7 @@ export const Navbar = () => {
                             My Settings
                           </DropdownItem>
                           <DropdownItem
-                            onClick={Logout}
+                            onClick={() => Logout(true)}
                             key="logout"
                             color="danger"
                           >
@@ -333,7 +351,7 @@ export const Navbar = () => {
                   </Link>
                 </NavbarMenuItem>
               ))}
-              <Button onClick={Logout} key="logout" color="danger">
+              <Button onClick={() => Logout(true)} key="logout" color="danger">
                 Logout
               </Button>
             </div>

@@ -336,7 +336,7 @@ export function Page() {
     <div className="min-h-screen p-6 bg-white dark:bg-gray-900">
       <header className="flex items-center justify-between px-6 py-4 bg-white rounded-md shadow-md dark:bg-gray-800">
         <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-          Add New Voucher
+          Pay New Fee
         </h1>
       </header>
 

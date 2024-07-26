@@ -45,4 +45,5 @@ urlpatterns = [
         views.admin_send_notifications,
         name="get_notifications",
     ),
+    path("vouchers/", views.VoucherListCreate.as_view(), name="voucher-list-create"),
 ]

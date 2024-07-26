@@ -72,17 +72,7 @@ interface Voucher {
   values: string[];
 }
 
-const INITIAL_VISIBLE_COLUMNS = [
-  "id",
-  "voucher_name",
-  "start_date",
-  "end_date",
-  "semester",
-  "created_for",
-  "total_amount",
-  "status",
-  "externalUserId",
-];
+const INITIAL_VISIBLE_COLUMNS = ["id", "semester", "total_amount", "status"];
 
 function Page() {
   const [sampleVouchers, setSampleVouchers] = useState<Voucher[]>([]);
@@ -384,20 +374,6 @@ function Page() {
                     }
                   >
                     <a href={`/dashboard/voucher/view/${voucher.id}`}>View</a>
-                  </DropdownItem>
-                  <DropdownItem
-                    startContent={
-                      <RefreshIcon className="w-4 h-4 text-secondary" />
-                    }
-                  >
-                    Edit
-                  </DropdownItem>
-                  <DropdownItem
-                    startContent={
-                      <DocumentRemoveIcon className="w-4 h-4 text-secondary" />
-                    }
-                  >
-                    Delete
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>

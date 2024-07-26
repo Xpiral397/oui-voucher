@@ -5,10 +5,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from .models import Voucher, Notification, Balance, Payment
+from .models import Voucher, Notification, Balance, Payment, VoucherToken
 from .serializers import (
     VoucherCreateSerializer,
     VoucherSerializer,
+    VoucherSerializers,
     NotificationSerializer,
     PaymentSerializer,
     BalanceSerializer,
@@ -300,19 +301,22 @@ def create_payment(request):
 def recharge(request):
     token = request.data.pop("token")
     try:
-        obj = Payment.objects.get(generated_voucher=token)
-    except Payment.DoesNotExist:
+        for i in VoucherToken.objects.all().values():
+            print(i.get("token"), i)
+        obj = VoucherToken.objects.get(token=token)
+
+    except VoucherToken.DoesNotExist:
         return Response(
             {"error": "Invalid voucher"}, status=status.HTTP_400_BAD_REQUEST
         )
-    if obj.voucher_used:
+    if obj.used:
         return Response(
             {"error": "Voucher already used"}, status=status.HTTP_409_CONFLICT
         )
     else:
 
         if request.user.matric_number:
-            obj.voucher_used = True
+            obj.used = True
             balance = Balance.objects.get(user=request.user)
             balance.balance += int(obj.amount)
             balance.save()
@@ -324,3 +328,23 @@ def recharge(request):
                 status=status.HTTP_200_OK,
             )
     return Response("Admin cannot recharge", status=status.HTTP_400_BAD_REQUEST)
+
+
+# views.py
+from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Voucher
+from .serializers import VoucherSerializer
+
+
+class VoucherListCreate(generics.ListCreateAPIView):
+    queryset = VoucherToken.objects.all()
+    serializer_class = VoucherSerializers
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data, many=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

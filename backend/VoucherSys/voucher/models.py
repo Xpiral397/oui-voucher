@@ -132,3 +132,24 @@ class PaymentTransaction(models.Model):
 
     def __str__(self):
         return f"Transaction {self.reference} - {self.status}"
+
+
+# models.py
+from django.db import models
+from django.utils import timezone
+
+
+class VoucherToken(models.Model):
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    serial = models.CharField(max_length=24, unique=True)
+    token = models.CharField(max_length=225, unique=True)
+    serial_number = models.CharField(max_length=100, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    used = models.BooleanField(default=False)
+    date_used = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.amount} - {self.serial} - {self.serial_number}"
+
+
+# Voucher.objects.all().delete()

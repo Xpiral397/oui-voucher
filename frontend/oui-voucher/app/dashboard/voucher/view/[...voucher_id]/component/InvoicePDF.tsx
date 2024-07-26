@@ -156,14 +156,6 @@ export const InvoicePDF: React.FC<any> = ({ voucher }) => {
               {toDate(parseISO(voucher.timestamp as any)).toISOString()}
             </Text>
           </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.label}>Start Date:</Text>
-            <Text style={styles.value}>{voucher.start_date}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.label}>End Date:</Text>
-            <Text style={styles.value}>{voucher.end_date}</Text>
-          </View>
         </View>
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>
@@ -259,7 +251,7 @@ export const InvoicePDF: React.FC<any> = ({ voucher }) => {
           </View>
         )}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Fees</Text>
+          <Text style={styles.sectionTitle}>Verification</Text>
           <View style={styles.table}>
             <View style={[styles.tableRow, styles.tableHeader]}>
               <Text style={styles.tableCell}>Fee Name</Text>
@@ -270,7 +262,7 @@ export const InvoicePDF: React.FC<any> = ({ voucher }) => {
               <View style={styles.tableRow} key={fee.id}>
                 <Text style={styles.tableCell}>{fee.name}</Text>
                 <Text style={styles.tableCell}>{fee.amount}</Text>
-                <Text style={styles.tableCell}>{fee.used ? "Yes" : "No"}</Text>
+                <Text style={styles.tableCell}>{"Payment Verified"}</Text>
               </View>
             ))}
           </View>

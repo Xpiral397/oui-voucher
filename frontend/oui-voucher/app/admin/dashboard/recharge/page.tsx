@@ -1,717 +1,361 @@
 "use client";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
-import axios from "axios";
-import { User } from "@/contexts/types"; // Import the User type
-import { base } from "@/base";
-import { getToken } from "@/app/controller/auth/auth";
+import React, { useState, useEffect } from "react";
+import Logo from "@/public/logo.png"; // Adjust the import based on your project structure
+import { jsPDF } from "jspdf";
+import { v4 as uuidv4 } from "uuid"; // Import uuid library
 import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
-import { Payment, Verified } from "@mui/icons-material";
-// import { RechargeAccount } from "@/app/dashboard/recharge/page";
+import { Analytics, Payment, Verified } from "@mui/icons-material";
+import { toast } from "react-toastify";
+import { base } from "@/base";
 
-// export function RechargePage() {
-//   const [amount, setAmount] = useState("");
-//   const [matricNumber, setMatricNumber] = useState("");
-//   const [access_code, setAccessCode] = useState("");
-//   const [phoneNumber, setPhoneNumber] = useState("");
-//   const [userExists, setUserExists] = useState(false);
-//   const [isProcessing, setIsProcessing] = useState(false);
-//   const [user, setUser] = useState<User | null>(null);
-//   const [paymentMethod, setPaymentMethod] = useState("");
-//   const router = useRouter();
+interface Voucher {
+  amount: string;
+  token: string;
+  serial: string;
+  serial_number: string;
+  created_at: Date;
+  used: boolean;
+  date_used?: Date;
+}
 
-//   const priceOptions = [5000, 10000, 20000, 50000, 100000, 500000];
+const generateNumericSerial = (length: number): string => {
+  const min = Math.pow(10, length - 1);
+  const max = Math.pow(10, length) - 1;
+  return Math.floor(Math.random() * (max - min + 1) + min).toString();
+};
 
-//   const handleAmountChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-//     setAmount(e.target.value);
-//   };
+export function VoucherGenerator() {
+  const [amount, setAmount] = useState<string>("");
+  const [quantity, setQuantity] = useState<number>(1);
+  const [voucherCodeLength, setVoucherCodeLength] = useState<number>(16); // Default length
+  const [vouchers, setVouchers] = useState<Voucher[]>([]);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
-//   const handleMatricNumberChange = async (
-//     e: React.ChangeEvent<HTMLInputElement>
-//   ) => {
-//     const matric = e.target.value;
-//     setMatricNumber(matric);
-
-//     if (matric.length >= 8) {
-//       try {
-//         console.log(base);
-//         const response = await fetch(`${base}/accounts/get/user/`, {
-//           method: "POST",
-//           headers: {
-//             "Content-Type": "application/json",
-//             Authorization: `Token ${getToken() ?? ""}`,
-//           },
-//           body: JSON.stringify({ matric_number: matric }),
-//         });
-//         const data = await response.json();
-//         setAccessCode(data.access_code);
-//         if (response.ok) {
-//           setUserExists(true);
-//           setAccessCode(data.access_code);
-//           setUser(data);
-//         } else {
-//           setUserExists(false);
-//           toast.error("User not found");
-//         }
-//       } catch (error) {
-//         setUserExists(false);
-//         toast.error("Error verifying user");
-//       }
-//     } else {
-//       setUserExists(false);
-//     }
-//   };
-
-//   const handleVerifyUser = async () => {
-//     if (!userExists) {
-//       toast.error("User not found");
-//       return;
-//     }
-//     // Handle additional verification if needed
-//   };
-
-//   const handlePaymentMethodChange = (
-//     e: React.ChangeEvent<HTMLInputElement>
-//   ) => {
-//     setPaymentMethod(e.target.value);
-//   };
-
-//   const handlePay = async () => {
-//     if (!userExists || !amount || !paymentMethod) {
-//       toast.error("Please complete all fields");
-//       return;
-//     }
-
-//     setIsProcessing(true);
-//     try {
-//       const response =
-//         paymentMethod === "card"
-//           ? await axios.post("/api/paystacks", {
-//               secretKey: "sk_test_910739f0f2b5a9929339eeec0a11203923f31927",
-//               user: {
-//                 email: user?.email,
-//                 matric_number: matricNumber,
-//                 phone_number: phoneNumber,
-//               },
-//               amount: amount,
-//             })
-//           : await axios.post(`${base}/pay-or-user/`, {
-//               matric_number: matricNumber,
-//               email: user?.email, // Adjust based on user context
-//               amount: amount,
-//             });
-
-//       if (response.status === 200) {
-//         if (paymentMethod === "card") {
-//           const { authorization_url, access_code } = response.data.data;
-//           toast.success("Access code created successfully");
-//           setAccessCode(access_code);
-//         } else {
-//           toast.success("Voucher loaded successfully!", {
-//             position: "bottom-center",
-//             autoClose: 50000,
-//             hideProgressBar: false,
-//             closeOnClick: true,
-//             pauseOnHover: true,
-//             draggable: true,
-//             progress: undefined,
-//           });
-//           // Additional actions if needed
-//         }
-//       }
-//     } catch (error) {
-//       toast.error("Payment failed");
-//     } finally {
-//       setIsProcessing(false);
-//     }
-//   };
-
-// export function RechargePage() {
-//   const [amount, setAmount] = useState("");
-//   const [matricNumber, setMatricNumber] = useState("");
-//   const [access_code, setAccessCode] = useState("");
-//   const [phoneNumber, setPhoneNumber] = useState("");
-//   const [userExists, setUserExists] = useState(false);
-//   const [isProcessing, setIsProcessing] = useState(false);
-//   const [user, setUser] = useState<User | null>(null);
-//   const [paymentMethod, setPaymentMethod] = useState("card");
-//   const [sessionID, setSessionID] = useState("");
-//   const [bank, setBank] = useState("");
-//   const router = useRouter();
-
-//   const priceOptions = [5000, 10000, 20000, 50000, 100000, 500000];
-
-//   const handleAmountChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-//     setAmount(e.target.value);
-//   };
-
-//   const handleMatricNumberChange = async (
-//     e: React.ChangeEvent<HTMLInputElement>
-//   ) => {
-//     const matric = e.target.value;
-//     setMatricNumber(matric);
-
-//     if (matric.length >= 8) {
-//       try {
-//         const response = await fetch(`${base}/accounts/get/user/`, {
-//           method: "POST",
-//           headers: {
-//             "Content-Type": "application/json",
-//             Authorization: `Token ${getToken() ?? ""}`,
-//           },
-//           body: JSON.stringify({ matric_number: matric }),
-//         });
-//         const data = await response.json();
-//         // setAccessCode(data.access_code);
-//         if (response.ok) {
-//           setUserExists(true);
-//           // setAccessCode(data.access_code);
-//           setUser(data);
-//         } else {
-//           setUserExists(false);
-//           toast.error("User not found");
-//         }
-//       } catch (error) {
-//         setUserExists(false);
-//         toast.error("Error verifying user");
-//       }
-//     } else {
-//       setUserExists(false);
-//     }
-//   };
-
-//   const handleVerifyUser = async () => {
-//     if (!userExists) {
-//       toast.error("User not found");
-//       return;
-//     }
-//     // Handle additional verification if needed
-//   };
-
-//   const handlePaymentMethodChange = (
-//     e: React.ChangeEvent<HTMLInputElement>
-//   ) => {
-//     setPaymentMethod(e.target.value);
-//   };
-
-//   const handlePay = async () => {
-//     if (!userExists || !amount || !paymentMethod) {
-//       toast.error("Please complete all fields");
-//       return;
-//     }
-
-//     setIsProcessing(true);
-//     try {
-//       const response =
-//         paymentMethod === "card"
-//           ? await axios.post("/api/paystacks", {
-//               secretKey: "sk_test_910739f0f2b5a9929339eeec0a11203923f31927",
-//               user: {
-//                 email: user?.email,
-//                 matric_number: matricNumber,
-//                 phone_number: phoneNumber,
-//               },
-//               amount: amount,
-//             })
-//           : await axios.post(`/api/pay-or-user/`, {
-//               matric_number: matricNumber,
-//               email: user?.email, // Adjust based on user context
-//               amount: amount,
-//               session_id: sessionID,
-//               bank: bank,
-//             });
-
-//       if (response.status === 200) {
-//         if (paymentMethod === "card") {
-//           const { authorization_url, access_code } = response.data.data;
-//           toast.success("Access code created successfully");
-//           setAccessCode(access_code);
-//         } else {
-//           toast.success("Voucher loaded successfully!", {
-//             position: "bottom-center",
-//             autoClose: 5000,
-//             hideProgressBar: false,
-//             closeOnClick: true,
-//             pauseOnHover: true,
-//             draggable: true,
-//             progress: undefined,
-//           });
-//         }
-//       }
-//     } catch (error) {
-//       toast.error("Payment failed");
-//     } finally {
-//       setIsProcessing(false);
-//     }
-//   };
-
-//   return (
-//     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-r from-white to-purple-50 dark:bg-slate-900">
-//       <h1 className="mb-8 text-4xl font-bold text-slate-900 dark:text-white">
-//         Recharge Your Account
-//       </h1>
-//       <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg dark:bg-slate-800">
-//         <select
-//           value={amount}
-//           onChange={handleAmountChange}
-//           className="w-full p-4 mb-4 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-//         >
-//           <option value="">Select Amount</option>
-//           {priceOptions.map((price) => (
-//             <option key={price} value={price}>
-//               NGN {price.toLocaleString()}
-//             </option>
-//           ))}
-//         </select>
-//         <input
-//           type="text"
-//           value={matricNumber}
-//           onChange={handleMatricNumberChange}
-//           placeholder="Matric Number"
-//           className="w-full p-4 mb-4 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-//         />
-//         <input
-//           type="text"
-//           value={phoneNumber}
-//           onChange={(e) => setPhoneNumber(e.target.value)}
-//           placeholder="Phone Number"
-//           className="w-full p-4 mb-4 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-//         />
-//         {userExists && user && (
-//           <div className="flex justify-between mb-4 space-x-2 text-center text-green-600">
-//             <input
-//               type="text"
-//               value={user.other_name}
-//               disabled
-//               className="w-full p-4 mb-4 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-//             />
-//             <input
-//               type="text"
-//               value={user.email}
-//               disabled
-//               className="w-full p-4 mb-4 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-//             />
-//           </div>
-//         )}
-//         <div className="mb-4">
-//           <label className="inline-flex items-center mr-4">
-//             <input
-//               type="radio"
-//               value="card"
-//               checked={paymentMethod === "card"}
-//               onChange={handlePaymentMethodChange}
-//               className="form-radio"
-//             />
-//             <span className="ml-2">Pay with Card</span>
-//           </label>
-//           <label className="inline-flex items-center">
-//             <input
-//               type="radio"
-//               value="voucher"
-//               checked={paymentMethod === "voucher"}
-//               onChange={handlePaymentMethodChange}
-//               className="form-radio"
-//             />
-//             <span className="ml-2">Load Voucher</span>
-//           </label>
-//         </div>
-
-//         {paymentMethod === "voucher" && (
-//           <>
-//             <input
-//               type="text"
-//               value={sessionID}
-//               onChange={(e) => setSessionID(e.target.value)}
-//               placeholder="Session ID"
-//               className="w-full p-4 mb-4 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-//             />
-//             <select
-//               value={bank}
-//               onChange={(e) => setBank(e.target.value)}
-//               className="w-full p-4 mb-4 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-//             >
-//               <option value="">Select Bank</option>
-//               <option value="Zenith">Zenith Bank</option>
-//               <option value="Wema">Wema Bank</option>
-//             </select>
-//           </>
-//         )}
-
-//         {access_code && (
-//           <>
-//             <label className="inline-flex items-center mr-4">
-//               <span className="ml-2">Generated Access Code</span>
-//             </label>
-//             <input
-//               type="text"
-//               disabled
-//               value={access_code}
-//               className="w-full p-4 mb-4 font-[Helvetica, sans-serif, os-apple] text-pretty tracking-wider text-2xl bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-//             />
-//           </>
-//         )}
-
-//         <button
-//           onClick={handlePay}
-//           className="w-full px-4 py-2 text-white bg-blue-600 rounded-lg shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-//         >
-//           {isProcessing ? "Processing..." : "Pay Now"}
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
-
-export function RechargePage() {
-  const [amount, setAmount] = useState("");
-  const [matricNumber, setMatricNumber] = useState("");
-  const [access_code, setAccessCode] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [userExists, setUserExists] = useState(false);
-  const [token, setToken] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState("card");
-  const [sessionID, setSessionID] = useState("");
-  const [bank, setBank] = useState("");
-  const router = useRouter();
-
-  const priceOptions = [5000, 10000, 20000, 50000, 100000, 500000];
-
-  const handleAmountChange = (e: any) => {
-    setAmount(e.target.value);
-  };
-
-  const handleMatricNumberChange = async (e: any) => {
-    const matric = e.target.value;
-    setMatricNumber(matric);
-
-    if (matric.length >= 8) {
-      try {
-        const response = await fetch(`${base}/accounts/get/user/`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Token ${getToken("Admin") ?? ""}`,
-          },
-          body: JSON.stringify({ matric_number: matric }),
-        });
-        const data = await response.json();
-        if (response.ok) {
-          setUserExists(true);
-          setUser(data);
-          toast.success("User fetched sucessfully");
-        } else {
-          setUserExists(false);
-        }
-      } catch (error) {
-        setUserExists(false);
-        toast.error("Error verifying user");
-      }
-    } else {
-      setUserExists(false);
+  const generateVouchers = () => {
+    setIsAuthenticated(false);
+    const newVouchers: Voucher[] = [];
+    for (let i = 0; i < Math.min(quantity, 33); i++) {
+      newVouchers.push({
+        amount,
+        serial: uuidv4().substring(1, 16), // Generate UUID for serial
+        serial_number: generateNumericSerial(voucherCodeLength), // Generate numeric serial number
+        created_at: new Date(),
+        token: generateNumericSerial(17),
+        used: false,
+      });
     }
+    setVouchers(newVouchers);
   };
 
-  const handleVerifyUser = async () => {
-    if (!userExists) {
-      toast.error("User not found");
-      return;
-    }
-  };
-
-  const handlePaymentMethodChange = (e: any) => {
-    setPaymentMethod(e.target.value);
-  };
-
-  const handlePay = async () => {
-    if (!userExists || !amount || !paymentMethod) {
-      toast.error("Please complete all fields");
-      return;
-    }
-
-    setIsProcessing(true);
+  const saveVouchers = async () => {
+    const id = toast.loading("Authenticating and Encrypting Voucher");
     try {
-      const response = await axios.post(
-        `${base}/voucher/create-payments/`,
-        {
-          amount: amount,
-          student: user?.id, // Assuming user object contains an id field
-          payment_sessionId: sessionID,
-          email: user?.email,
-          bank_used: bank,
-          generated_voucher: access_code,
-          payment_method: paymentMethod,
+      const response = await fetch(`${base}/voucher/vouchers/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        {
-          headers: {
-            Authorization: `Token ${getToken("Admin") ?? ""}`,
-          },
-        }
-      );
+        body: JSON.stringify(vouchers),
+      });
 
-      if (response.status === 201) {
-        toast.success("Payment processed successfully");
-        setToken(response.data.generated_voucher);
+      if (!response.ok) {
+        // throw new Error("Failed to save vouchers");
+        toast.dismiss(id);
+        toast.error("Voucher Authentication Failed");
+      } else {
+        const data = await response.json();
+        console.log(data.message);
+        toast.dismiss(id);
+        toast.success("All Vouchers Authenticated ");
+        setIsAuthenticated(true);
       }
     } catch (error) {
-      toast.error("Payment failed");
-    } finally {
-      setIsProcessing(false);
+      toast.dismiss(id);
+      // console.error("Error saving vouchers:", error);
+      toast.error("Voucher Authentication Failed");
     }
+  };
+
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
+    const margin = 3;
+    const cardWidth = (pageWidth - margin * 3) / 3; // Two columns per page
+    const cardHeight = (pageHeight - margin * 9) / 9; // Two rows per page
+
+    // Add Watermark
+    // doc.addImage(
+    //   Logo.src,
+    //   "PNG",
+    //   margin,
+    //   margin,
+    //   pageWidth - margin * 2,
+    //   pageHeight - margin * 2,
+    //   "",
+    //   "S",
+    //   0.1
+    // );
+    // doc.addGState({})
+
+    vouchers.forEach((voucher, index) => {
+      const row = Math.floor(index / 3); // 2 vouchers per row
+      const col = index % 3;
+      const x = margin + col * cardWidth;
+      const y = margin + row * cardHeight;
+
+      if (index > 33) {
+        doc.addPage(); // Add a new page after every 2 vouchers
+      }
+
+      doc.setFontSize(9);
+      doc;
+      doc.text("Oduduwa University Ipetumodu", x + 10, y + 10);
+      doc.text(`Amount: ${voucher.amount}`, x + 10, y + 13);
+      doc.text(`Serial: ${voucher.serial}`, x + 10, y + 16);
+      doc.text(`Serial Number: ${voucher.serial_number}`, x + 10, y + 19);
+      doc.text(`Token: ${voucher.token}`, x + 10, y + 22);
+      doc.text(
+        `Created At: ${voucher.created_at.toLocaleString()}`,
+        x + 10,
+        y + 25
+      );
+      // doc.setFontSize(12);
+    });
+
+    doc.save("vouchers.pdf");
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-r from-white to-purple-50 dark:bg-slate-900">
-      <h1 className="mb-8 text-4xl font-bold text-slate-900 dark:text-white">
-        Recharge Your Account
-      </h1>
-      <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg dark:bg-slate-800">
-        <select
-          value={amount}
-          onChange={handleAmountChange}
-          className="w-full p-4 mb-4 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-        >
-          <option value="">Select Amount</option>
-          {priceOptions.map((price) => (
-            <option key={price} value={price}>
-              NGN {price.toLocaleString()}
-            </option>
-          ))}
-        </select>
-        <input
-          type="text"
-          value={matricNumber}
-          onChange={handleMatricNumberChange}
-          placeholder="Matric Number"
-          className="w-full p-4 mb-4 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-        />
-        <input
-          type="text"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
-          placeholder="Phone Number"
-          className="w-full p-4 mb-4 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-        />
-        {userExists && user && (
-          <div className="flex justify-between mb-4 space-x-2 text-center text-green-600">
+    <div className="relative z-10 p-8 bg-white dark:bg-slate-900">
+      <div
+        className="absolute inset-0 z-0 bg-no-repeat bg-cover opacity-10"
+        style={{ backgroundImage: `url(${Logo.src})` }}
+      ></div>
+      <div className="relative z-20 p-6 bg-white bg-opacity-90 dark:bg-slate-800 dark:bg-opacity-90">
+        <h1 className="text-3xl font-bold text-center text-slate-900 dark:text-white mb-8">
+          Voucher Generator
+        </h1>
+        <div className="space-y-4">
+          <div>
+            <label className="block mb-2 text-slate-700 dark:text-white">
+              Amount:
+            </label>
+            <select
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="w-full p-2 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
+            >
+              <option value="">Select Amount</option>
+              <option value="5000">5,000</option>
+              <option value="10000">10,000</option>
+              <option value="20000">20,000</option>
+              <option value="50000">50,000</option>
+              <option value="100000">100,000</option>
+              <option value="200000">200,000</option>
+              <option value="500000">500,000</option>
+            </select>
+          </div>
+          <div>
+            <label className="block mb-2 text-slate-700 dark:text-white">
+              Quantity:
+            </label>
             <input
-              type="text"
-              value={user?.other_name}
-              disabled
-              className="w-full p-4 mb-4 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-            />
-            <input
-              type="text"
-              value={user?.email}
-              disabled
-              className="w-full p-4 mb-4 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
+              type="number"
+              value={quantity}
+              max={33}
+              onChange={(e) =>
+                setQuantity(
+                  Number(e.target.value) > 33 ? Number(e.target.value) : 33
+                )
+              }
+              min="1"
+              className="w-full p-2 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
             />
           </div>
-        )}
-        <div className="mb-4">
-          <label className="inline-flex items-center mr-4">
-            <input
-              type="radio"
-              value="card"
-              checked={paymentMethod === "card"}
-              onChange={handlePaymentMethodChange}
-              className="form-radio"
-            />
-            <span className="ml-2">Pay with Card</span>
-          </label>
-          <label className="inline-flex items-center">
-            <input
-              type="radio"
-              value="voucher"
-              checked={paymentMethod === "voucher"}
-              onChange={handlePaymentMethodChange}
-              className="form-radio"
-            />
-            <span className="ml-2">Load Voucher</span>
-          </label>
-        </div>
-
-        {paymentMethod === "voucher" && (
-          <>
-            <input
-              type="text"
-              value={sessionID}
-              onChange={(e) => setSessionID(e.target.value)}
-              placeholder="Session ID"
-              className="w-full p-4 mb-4 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-            />
+          <div>
+            <label className="block mb-2 text-slate-700 dark:text-white">
+              Voucher Code Length:
+            </label>
             <select
-              value={bank}
-              onChange={(e) => setBank(e.target.value)}
-              className="w-full p-4 mb-4 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
+              value={voucherCodeLength}
+              onChange={(e) => setVoucherCodeLength(Number(e.target.value))}
+              className="w-full p-2 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
             >
-              <option value="">Select Bank</option>
-              <option value="Zenith">Zenith Bank</option>
-              <option value="Wema">Wema Bank</option>
+              <option value={16}>12</option>
+              <option value={18}>8</option>
+              <option value={12}>10</option>
+              <option value={25}>98</option>
             </select>
-          </>
+          </div>
+          <div className="flex space-x-4">
+            <button
+              onClick={generateVouchers}
+              className="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg hover:bg-blue-700 dark:bg-slate-700 dark:hover:bg-slate-900"
+            >
+              Generate Vouchers
+            </button>
+            <button
+              onClick={saveVouchers}
+              className="px-4 py-2 font-bold text-white bg-blue-500 rounded-lg hover:bg-blue-700 dark:bg-slate-700 dark:hover:bg-slate-900"
+            >
+              Authenticate Vouchers
+            </button>
+            <button
+              disabled={!isAuthenticated}
+              onClick={downloadPDF}
+              className={`${!isAuthenticated ? "opacity-[0.1]" : ""} px-4 py-2 font-bold text-white bg-green-500 rounded-lg hover:bg-green-700 dark:bg-slate-700 dark:hover:bg-slate-900`}
+            >
+              Download as PDF
+            </button>
+          </div>
+        </div>
+        {vouchers.length > 0 && (
+          <div className="mt-8">
+            <h2 className="mb-4 text-2xl font-bold text-center text-slate-900 dark:text-white">
+              Generated Vouchers
+            </h2>
+            <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {vouchers.map((voucher, index) => (
+                <div key={index} className="p-4 border rounded-lg watermark">
+                  <p>Amount: {voucher.amount}</p>
+                  <p>Serial: {voucher.serial}</p>
+                  <p>Serial Number: {voucher.serial_number}</p>
+                  <p>
+                    Created At: {new Date(voucher.created_at).toLocaleString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
-
-        {access_code && (
-          <>
-            <label className="inline-flex items-center mr-4">
-              <span className="ml-2">Generated Access Code</span>
-            </label>
-            <input
-              type="text"
-              disabled
-              value={access_code}
-              className="w-full p-4 mb-4 font-[Helvetica, sans-serif, os-apple] text-pretty tracking-wider text-2xl bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-            />
-          </>
-        )}
-
-        {token && (
-          <>
-            <label className="inline-flex items-center mr-4">
-              <span className="ml-2">Generated Token</span>
-            </label>
-            <input
-              type="text"
-              disabled
-              value={token}
-              className="w-full p-4 mb-4 font-[Helvetica, sans-serif, os-apple] text-pretty tracking-wider text-sm bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-            />
-          </>
-        )}
-
-        <button
-          onClick={handlePay}
-          className="w-full px-4 py-2 text-white bg-blue-600 rounded-lg shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-        >
-          {isProcessing ? "Processing..." : "Pay Now"}
-        </button>
       </div>
     </div>
   );
 }
 
-//   return (
-//     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-r from-white to-purple-50 dark:bg-slate-900">
-//       <h1 className="mb-8 text-4xl font-bold text-slate-900 dark:text-white">
-//         Recharge Your Account
-//       </h1>
-//       <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg dark:bg-slate-800">
-//         <select
-//           value={amount}
-//           onChange={handleAmountChange}
-//           className="w-full p-4 mb-4 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-//         >
-//           <option value="">Select Amount</option>
-//           {priceOptions.map((price) => (
-//             <option key={price} value={price}>
-//               NGN {price.toLocaleString()}
-//             </option>
-//           ))}
-//         </select>
-//         <input
-//           type="text"
-//           value={matricNumber}
-//           onChange={handleMatricNumberChange}
-//           placeholder="Matric Number"
-//           className="w-full p-4 mb-4 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-//         />
-//         <input
-//           type="text"
-//           value={phoneNumber}
-//           onChange={(e) => setPhoneNumber(e.target.value)}
-//           placeholder="Phone Number"
-//           className="w-full p-4 mb-4 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-//         />
-//         {userExists && user && (
-//           <div className="flex justify-between mb-4 space-x-2 text-center text-green-600">
-//             <input
-//               type="text"
-//               value={user.other_name}
-//               disabled
-//               // onChange={handleMatricNumberChange}
-//               // placeholder="Matric Number"
-//               className="w-full p-4 mb-4 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-//             />
-//             <input
-//               type="text"
-//               value={user.email}
-//               disabled
-//               // onChange={handleMatricNumberChange}
-//               // placeholder="Matric Number"
-//               className="w-full p-4 mb-4 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-//             />
-//           </div>
-//         )}
-//         <div className="mb-4">
-//           <label className="inline-flex items-center mr-4">
-//             <input
-//               type="radio"
-//               value="card"
-//               checked={paymentMethod === "card"}
-//               onChange={handlePaymentMethodChange}
-//               className="form-radio"
-//             />
-//             <span className="ml-2">Pay with Card</span>
-//           </label>
-//           <label className="inline-flex items-center">
-//             <input
-//               type="radio"
-//               value="voucher"
-//               checked={paymentMethod === "voucher"}
-//               onChange={handlePaymentMethodChange}
-//               className="form-radio"
-//             />
-//             <span className="ml-2">Load Voucher</span>
-//           </label>
-//         </div>
+import { useTheme } from "next-themes";
+import axios from "axios";
 
-//         {access_code && (
-//           <>
-//             {" "}
-//             <label className="inline-flex items-center mr-4">
-//               <span className="ml-2">Generated Access Code</span>
-//             </label>
-//             <input
-//               type="text"
-//               disabled
-//               value={access_code}
-//               // onChange={(e) => setPhoneNumber(e.target.value)}
-//               placeholder="Phone Number"
-//               className="w-full p-4 mb-4 font-[Helvetica, sans-serif, os-apple] text-pretty tracking-wider text-2xl bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
-//             />
-//           </>
-//         )}
+interface Voucher {
+  amount: string;
+  serial: string;
+  serial_number: string;
+  created_at: Date;
+  used: boolean;
+  date_used?: Date;
+}
 
-//         <button
-//           onClick={handlePay}
-//           className="w-full px-4 py-2 text-white bg-blue-600 rounded-lg shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-//         >
-//           {isProcessing ? "Processing..." : "Pay Now"}
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
+const amounts = [
+  "5000",
+  "10000",
+  "20000",
+  "50000",
+  "100000",
+  "200000",
+  "500000",
+];
+
+const ListVoucher: React.FC = () => {
+  const [vouchers, setVouchers] = useState<Voucher[]>([]);
+  const { theme, setTheme } = useTheme();
+
+  useEffect(() => {
+    // Fetch vouchers from the backend
+    axios.get(`${base}/voucher/vouchers/`).then((response) => {
+      setVouchers(response.data);
+    });
+  }, []);
+
+  const handleThemeChange = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
+
+  const getVouchersByAmount = (amount: string) => {
+    return vouchers.filter(
+      (voucher) => Number(voucher.amount) === Number(amount)
+    );
+  };
+
+  const calculateTotals = (vouchers: Voucher[]) => {
+    const totalAmount = vouchers.reduce(
+      (sum, voucher) => sum + parseFloat(voucher.amount),
+      0
+    );
+    const totalUsed = vouchers.filter((v) => v.used).length;
+    const totalUnused = vouchers.filter((v) => !v.used).length;
+
+    return { totalAmount, totalUsed, totalUnused };
+  };
+
+  const cardColors: { [key: string]: string } = {
+    "5000": "bg-blue-50",
+    "10000": "bg-green-50",
+    "20000": "bg-yellow-50",
+    "50000": "bg-red-50",
+    "100000": "bg-purple-50",
+    "200000": "bg-pink-50",
+    "500000": "bg-indigo-50",
+  };
+
+  return (
+    <div
+      className={`min-h-screen p-6 ${theme === "dark" ? "bg-black text-white" : "bg-white text-black"}`}
+    >
+      <button
+        onClick={handleThemeChange}
+        className="px-4 py-2 mb-4 font-bold text-white bg-blue-500 rounded-lg hover:bg-blue-700"
+      >
+        Toggle Theme
+      </button>
+
+      <h1 className="text-3xl font-bold mb-6">Voucher Statistics</h1>
+
+      <div className="grid gap-3 grid-cols-3">
+        {amounts.map((amount) => {
+          const vouchersByAmount = getVouchersByAmount(amount);
+          const { totalAmount, totalUsed, totalUnused } =
+            calculateTotals(vouchersByAmount);
+
+          return (
+            <div
+              key={amount}
+              className={`mb-6 p-4 border rounded-lg ${cardColors[amount]}`}
+            >
+              <h2 className="text-2xl font-bold mb-4">Amount: {amount}</h2>
+              {vouchersByAmount.length > 0 ? (
+                <>
+                  <p>Total Amount (NGN): {totalAmount.toLocaleString()}</p>
+                  <p>Total Used: {totalUsed}</p>
+                  <p>Total Unused: {totalUnused}</p>
+                </>
+              ) : (
+                <p>No vouchers available for this amount.</p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 export default function Page() {
   return (
-    <div className="flex flex-col w-full p-4 font-[Helvtica] tracking-wide text-warning-foreground">
+    <div className="flex flex-col w-full p-4 font-[Helvetica] tracking-wide text-warning-foreground">
       <Tabs aria-label="Options" color="primary" variant="bordered">
         <Tab
           key="Home"
           title={
             <div className="flex items-center space-x-2">
               <Payment />
-              <span>Pay With Card</span>
+              <span>Create Vouchers</span>
             </div>
           }
         >
           <Card>
             <CardBody className="dark:bg-slate-900">
-              <RechargePage />
+              <VoucherGenerator />
             </CardBody>
           </Card>
         </Tab>
@@ -719,14 +363,14 @@ export default function Page() {
           key="load"
           title={
             <div className="flex items-center space-x-2">
-              <Verified />
-              <span>Load My Voucher</span>
+              <Analytics />
+              <span>Voucher Analytics</span>
             </div>
           }
         >
           <Card>
             <CardBody className="dark:bg-slate-900">
-              <></>
+              <ListVoucher />
             </CardBody>
           </Card>
         </Tab>

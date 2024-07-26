@@ -15,7 +15,7 @@ import { EyeIcon } from "@heroicons/react/outline";
 import { EyeOffIcon } from "@heroicons/react/outline";
 import { useDashBoardContext } from "@/contexts/dashboard/useDashboard";
 
-export function MyDashBoardAACount() {
+export function MyDashBoardACount() {
   const { user } = useContext(useUserContext);
   const { dashboard, setDashBoard } = useContext(useDashBoardContext);
   const setHide = () => {
@@ -73,7 +73,9 @@ export function MyDashBoardAACount() {
                 >
                   <RemoveRedEye className="h-6 w-6 font-[600]" />
                   <span className="font-sans text-4xl">
-                    {Number(dashboard?.balance ?? "0").toLocaleString()}
+                    {dashboard?.balance
+                      ? Number(dashboard?.balance ?? "0").toLocaleString()
+                      : "Loading..."}
                   </span>
                 </div>
               )}
@@ -211,7 +213,7 @@ export function MyDashBoardAACount() {
 export default function Page() {
   return (
     <>
-      <MyDashBoardAACount />
+      <MyDashBoardACount />
       <Tabs aria-label="Options" color="primary" variant="bordered">
         <Tab
           key="Home"

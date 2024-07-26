@@ -127,7 +127,7 @@ export function PaymentVoucher() {
             htmlFor="referenceId"
             className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
           >
-            Reference ID
+            Voucher Token
           </label>
           <input
             type="text"
@@ -135,7 +135,7 @@ export function PaymentVoucher() {
             value={referenceId}
             onChange={(e) => setReferenceId(e.target.value)}
             className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg shadow-sm dark:bg-slate-700 dark:text-white dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Enter your reference ID"
+            placeholder="Enter your voucher token"
           />
         </div>
         <button
@@ -158,7 +158,7 @@ import {
   Payment,
 } from "@mui/icons-material";
 import { CardActions } from "@mui/material";
-import { MyDashBoardAACount } from "../voucher/page";
+import { MyDashBoardACount } from "../voucher/page";
 import { headers } from "next/headers";
 import axios from "axios";
 import { useDashBoardContext } from "@/contexts/dashboard/useDashboard";
@@ -169,9 +169,9 @@ export default function Page() {
 
   return (
     <div className="flex flex-col w-full p-4 font-[Helvtica] tracking-wide text-warning-foreground">
-      <MyDashBoardAACount />
+      <MyDashBoardACount />
       <Tabs aria-label="Options" color="primary" variant="bordered">
-        <Tab
+        {/* <Tab
           key="Home"
           title={
             <div className="flex items-center space-x-2">
@@ -185,7 +185,7 @@ export default function Page() {
               <RechargeAccount />
             </CardBody>
           </Card>
-        </Tab>
+        </Tab> */}
         <Tab
           key="load"
           title={

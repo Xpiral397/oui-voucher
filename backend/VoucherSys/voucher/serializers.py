@@ -1,6 +1,14 @@
 from accounts.serializers import UserSerializer
 from rest_framework import serializers
-from .models import Voucher, Transaction, Balance, Fee, Notification, PaymentRefrence
+from .models import (
+    Voucher,
+    Transaction,
+    Balance,
+    Fee,
+    Notification,
+    PaymentRefrence,
+    VoucherToken,
+)
 from rest_framework import serializers
 from .models import PaymentTransaction
 from accounts.models import CustomUser
@@ -128,3 +136,25 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = "__all__"
+
+
+# serializers.py
+from rest_framework import serializers
+from .models import Voucher
+
+
+class VoucherSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = VoucherToken
+        fields = [
+            "amount",
+            "serial",
+            "serial_number",
+            "token",
+            "created_at",
+            "used",
+            "date_used",
+        ]
+
+
+# VoucherToken.objects.all().delete()
