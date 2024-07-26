@@ -94,14 +94,14 @@ const Page = () => {
       <main className="flex flex-col items-center max-w-6xl px-4 mx-auto mt-10">
         <div className="mx-10 mb-20 text-center md:w-2/3">
           <h1 className="mb-10 text-5xl font-bold dark:text-white text-slate-800">
-            Oduduwa Online
+            Pay All Your Fee Remotely
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500">
-              Voucher Payments
+              Today
             </span>{" "}
             System
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-300 font-[400] text-center tracking-wide md:w-full w-[300px] mb-10">
-            OUI Online Voucher School Fees Remote Payment.
+            OUI Online School Payment Portal
           </p>
           <div className="flex flex-col w-full space-x-2 sm:flex-row sm:space-x-0">
             {" "}
