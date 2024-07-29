@@ -56,25 +56,28 @@ export const Navbar = () => {
   // consoe.log(admin);
 
   const Logout = (isAdmin: boolean) => {
-    if (isAdmin) {
+    if (isAdmin && localStorage.getItem("BON::READER:Admin:DATA")) {
       router.push("admin/auth/login");
+      setUser((e) => {
+        return { processing: true } as any;
+      });
       localStorage.removeItem("BON::READER:Admin:DATA");
       toast.success("Logout sucessfully", {
         autoClose: 5000,
         position: "top-right",
       });
-    } else {
+    }
+    if (!isAdmin && localStorage.getItem("BON::READER:USER:DATA")) {
       router.push("/auth/login");
+      setUser((e) => {
+        return { processing: true } as any;
+      });
       localStorage.removeItem("BON::READER:USER:DATA");
       toast.success("Logout sucessfully", {
         autoClose: 5000,
         position: "top-right",
       });
     }
-
-    setUser((e) => {
-      return { processing: true } as any;
-    });
   };
   useEffect(() => {
     setWindow(window.location.href);
@@ -103,22 +106,24 @@ export const Navbar = () => {
             </p>
           </NextLink>
         </NavbarBrand>
-        <ul className="justify-start hidden gap-4 ml-2 lg:flex">
-          {siteConfig.navItems.map((item) => (
-            <NavbarItem key={item.href}>
-              <NextLink
-                className={clsx(
-                  linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium"
-                )}
-                color="foreground"
-                href={item.href}
-              >
-                {item.label}
-              </NextLink>
-            </NavbarItem>
-          ))}
-        </ul>
+        {!admin?.email && user && user?.email && (
+          <ul className="justify-start hidden gap-4 ml-2 lg:flex">
+            {siteConfig.navItems.map((item) => (
+              <NavbarItem key={item.href}>
+                <NextLink
+                  className={clsx(
+                    linkStyles({ color: "foreground" }),
+                    "data-[active=true]:text-primary data-[active=true]:font-medium"
+                  )}
+                  color="foreground"
+                  href={item.href}
+                >
+                  {item.label}
+                </NextLink>
+              </NavbarItem>
+            ))}
+          </ul>
+        )}
       </NavbarContent>
 
       <NavbarContent
@@ -226,7 +231,7 @@ export const Navbar = () => {
       </NavbarContent>
 
       <NavbarMenu className="flex flex-row items-center w-full ">
-        <div className="w-full rounded-md p-12  dark:shadow-zinc-900 shadow-2xl flex  justify-between space-x-[70px] -mt-[400px] ">
+        <div className="w-full rounded-md p-12  dark:shadow-zinc-900 shadow-2xl flex  justify-between md:space-x-[70px] -mt-[400px] ">
           <NavbarContent className=" sm:hidden basis-1" justify="end">
             <NavbarItem className="flex">
               {(() => {
@@ -382,6 +387,9 @@ export const Navbar = () => {
               >
                 Signup
               </Link>
+              <Button onClick={() => Logout(true)} key="logout" color="danger">
+                {admin?.email ? "Logout" : "Login"}
+              </Button>
             </div>
           )}
         </div>

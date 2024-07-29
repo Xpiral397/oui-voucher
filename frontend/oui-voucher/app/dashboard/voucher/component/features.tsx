@@ -12,20 +12,20 @@ import { ScrollShadow } from "@nextui-org/react";
 export function FeaturesSection() {
   const features = [
     {
-      title: "Make Payement",
+      title: "Make New Payment",
       description: "Create new vouchers easily for payments.",
       icon: <PlusIcon className="w-12 h-12" />,
       link: "/dashboard/voucher/new",
     },
 
-    // {
-    //   title: "View Approved Vouchers",
-    //   description: "Check the status of used vouchers.",
-    //   icon: <EyeIcon className="w-12 h-12" />,
-    //   link: "/dashboard/voucher/manage",
-    // },
     {
-      title: "Generate PDF Invoice",
+      title: "Recharge Account",
+      description: "Check the status of used vouchers.",
+      icon: <EyeIcon className="w-12 h-12" />,
+      link: "/dashboard/recharge",
+    },
+    {
+      title: "Manage Payment & Generate Invoices",
       description: "Create and download PDF invoices.",
       icon: <DownloadIcon className="w-12 h-12" />,
       link: "/dashboard/voucher/manage",

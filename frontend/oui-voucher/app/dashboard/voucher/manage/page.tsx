@@ -680,7 +680,7 @@ function Page() {
             {(item) => (
               <TableRow key={item.id}>
                 {(columnKey) => (
-                  <TableCell>
+                  <TableCell key={item.id}>
                     {renderCell(item, columnKey as string) as string}
                   </TableCell>
                 )}

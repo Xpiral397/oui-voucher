@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Link } from "@nextui-org/link";
 import {
   PlusIcon,
@@ -14,6 +14,7 @@ import { OnlinePredictionRounded } from "@mui/icons-material";
 import Logo from "@/public/logo.png";
 import { useUserContext } from "@/contexts/users/userUser";
 import { Button } from "@nextui-org/button";
+import { useAdminContext } from "@/contexts/users/useAdmin";
 
 export const FeatureCard = ({ title, description, icon }: any) => {
   return (
@@ -30,26 +31,20 @@ export const FeatureCard = ({ title, description, icon }: any) => {
 export const FeaturesSection = () => {
   const features = [
     {
-      title: "Add New Voucher",
+      title: "Make New Payment",
       description: "Create new vouchers easily for payments.",
       icon: <PlusIcon className="w-12 h-12" />,
     },
 
     {
-      title: "View Approved Vouchers",
+      title: "Recharge Account",
       description: "Check the status of used vouchers.",
       icon: <EyeIcon className="w-12 h-12" />,
     },
     {
-      title: "Generate PDF Invoice",
+      title: "Manage Payment & Generate Invoices",
       description: "Create and download PDF invoices.",
       icon: <DownloadIcon className="w-12 h-12" />,
-    },
-
-    {
-      title: "Transaction View",
-      description: "View all transactions in one place.",
-      icon: <ClipboardListIcon className="w-12 h-12" />,
     },
   ];
 
@@ -77,6 +72,10 @@ export const FeaturesSection = () => {
 
 const Page = () => {
   const { user, setUser } = useContext(useUserContext);
+  const { admin, setAdmin } = useContext(useAdminContext);
+  useEffect(() => {
+    console.log(user, "user");
+  }, []);
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* <header className="flex items-center justify-between px-6 py-4 bg-gray-100 dark:bg-gray-800">
@@ -110,17 +109,20 @@ const Page = () => {
                 (user &&
                   ((user.matric_number && "/dashboard/voucher") ||
                     "/auth/signup")) ??
+                (admin &&
+                  ((admin.email && "/admin/dashboard/voucher") ||
+                    "/auth/signup")) ??
                 "#"
               }
               className="w-full"
             >
-              {user ? (
+              {((user?.email || (admin && admin.email)) && (
                 <div className="w-full bg-gradient-to-r from-slate-900 to-purple-500 p-[1px] rounded-md mb-4">
                   <button className="w-full py-4 font-bold text-gray-300 rounded-md shadow-xl bg-gradient-to-r from-blue-500 to-purple-500 drop-shadow-2xl">
                     Get Started
                   </button>
                 </div>
-              ) : (
+              )) || (
                 <Button
                   isLoading={true}
                   className="w-full py-4 mb-4 font-bold text-gray-400 rounded-md shadow-sm bg-gradient-to-r from-blue-500 to-purple-500 drop-shadow-sm"
@@ -129,31 +131,23 @@ const Page = () => {
                 </Button>
               )}
             </a>
-            {user && !user.matric_number ? (
-              <a
-                href={
-                  (user &&
-                    ((user.matric_number && "/auth/login") || "/auth/login")) ??
-                  "#"
-                }
-                className="w-full"
-              >
+            {(!user?.email && !admin?.email && (
+              <a href={"/auth/login"} className="w-full">
                 <div className="w-full bg-gradient-to-r p-[1px] rounded-md">
                   <button className="w-full py-4 font-bold text-gray-400 rounded-md shadow-sm bg-gradient-to-r from-blue-500 to-purple-500 drop-shadow-sm">
                     Login
                   </button>
                 </div>
               </a>
-            ) : (
-              !user && (
+            )) ||
+              (!user && !admin && (
                 <Button
                   isLoading={true}
                   className="w-full py-4 font-bold text-gray-400 rounded-md shadow-sm bg-gradient-to-r from-blue-500 to-purple-500 drop-shadow-sm"
                 >
                   Loading...
                 </Button>
-              )
-            )}
+              ))}
           </div>
         </div>
 

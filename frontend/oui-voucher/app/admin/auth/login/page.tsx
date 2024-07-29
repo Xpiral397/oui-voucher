@@ -75,19 +75,19 @@ export default function SiginCar() {
     if (admin && admin.email) {
       setUser(() => null);
       router.push("/admin/dashboard/voucher");
-      toast.success(
-        "ops sorry, it might be sweet but you are already login can't do this again",
-        {
-          position: "bottom-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        }
-      );
+      // toast.success(
+      //   "ops sorry, it might be sweet but you are already login can't do this again",
+      //   {
+      //     position: "bottom-right",
+      //     autoClose: 5000,
+      //     hideProgressBar: false,
+      //     closeOnClick: true,
+      //     pauseOnHover: true,
+      //     draggable: true,
+      //     progress: undefined,
+      //     theme: "light",
+      //   }
+      // );
     }
   });
 
@@ -95,19 +95,20 @@ export default function SiginCar() {
     if (admin && admin.email) {
       setUser(() => null);
       router.push("/admin/dashboard/voucher");
-      toast.success(
-        "ops sorry, it might be sweet but you are already login can't do this again",
-        {
-          position: "bottom-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        }
-      );
+      //   toast.success(
+      //     "ops sorry, it might be sweet but you are already login can't do this again",
+      //     {
+      //       position: "bottom-right",
+      //       autoClose: 5000,
+      //       hideProgressBar: false,
+      //       closeOnClick: true,
+      //       pauseOnHover: true,
+      //       draggable: true,
+      //       progress: undefined,
+      //       theme: "light",
+      //     }
+      //   );
+      //
     }
 
     if (has) {
@@ -175,7 +176,7 @@ export default function SiginCar() {
       });
       router.push("/admin/dashboard");
     } else {
-      toast("Login Failed, Your matric_number and your password did't match ", {
+      toast("Login Failed, Your email and your password did't match ", {
         type: "error",
         position: "bottom-right",
         autoClose: 5000,

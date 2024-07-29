@@ -19,24 +19,16 @@ export const siteConfig = {
       href: "/dashboard",
     },
     {
-      label: "Voucher",
+      label: "Fees Payment",
       href: "/dashboard/voucher/new",
     },
     {
       label: "Invoice",
-      href: "/dashboard/voucher/new?i=invoice",
+      href: "/dashboard/voucher/manage",
     },
     {
       label: "Recharge",
-      href: "/dashboard/voucher/new?i=recharge",
-    },
-    {
-      label: "Notification",
-      href: "/dashboard/voucher/new?notification=get-all-from02g",
-    },
-    {
-      label: "Settings",
-      href: "/dashboard/voucher/new?mySetting=backend-setting-api_keys",
+      href: "/dashboard/recharge",
     },
   ],
   links: {

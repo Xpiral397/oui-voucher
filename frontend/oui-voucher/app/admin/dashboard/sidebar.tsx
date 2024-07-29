@@ -48,7 +48,7 @@ export function Sidebar() {
             </a> */}
           </nav>
         </div>
-        <div className="mb-10">
+        {/* <div className="mb-10">
           <a
             href="#"
             className="flex items-center p-4 text-blue-900 transition-colors duration-200 dark:text-slate-200 hover:bg-blue-200 dark:hover:bg-slate-700"
@@ -56,7 +56,7 @@ export function Sidebar() {
             <CogIcon className="w-5 h-5 mr-3" />
             Settings
           </a>
-        </div>
+        {/* </div> */}
       </div>
     </div>
   );

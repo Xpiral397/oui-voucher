@@ -244,7 +244,7 @@ export function Page() {
     }
 
     // Processing
-    const id = toast.loading("Creating voucher...");
+    const id = toast.loading("Processing our payment...");
 
     try {
       // Construct the payload
@@ -271,18 +271,18 @@ export function Page() {
       const response = await createNewVoucher(payload);
 
       if (!response.ok) {
-        throw new Error("Failed to create voucher. Please try again later.");
+        throw new Error("Failed to create payement. Please try again later.");
       }
 
       // Voucher created successfully
       toast.dismiss(id);
-      toast.success("Voucher created successfully!");
+      toast.success("All the Fees has been paid for  successfully!");
 
       router.push("/dashboard/voucher/manage");
     } catch (error: any) {
       toast.dismiss(id);
       toast.error(
-        error.message ?? "Failed to create voucher. Please try again later."
+        error.message ?? "Failed to create payment. Please try again later."
       );
     }
   };
@@ -494,7 +494,7 @@ export function Page() {
           </label>
           <Divider />
 
-          <div className="flex space-x-3 mt-3 mb-3">
+          <div className="flex mt-3 mb-3 space-x-3">
             <input
               type="name"
               // max={fee.amount}

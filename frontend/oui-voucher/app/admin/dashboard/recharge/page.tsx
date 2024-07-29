@@ -133,7 +133,7 @@ export function VoucherGenerator() {
         style={{ backgroundImage: `url(${Logo.src})` }}
       ></div>
       <div className="relative z-20 p-6 bg-white bg-opacity-90 dark:bg-slate-800 dark:bg-opacity-90">
-        <h1 className="text-3xl font-bold text-center text-slate-900 dark:text-white mb-8">
+        <h1 className="mb-8 text-3xl font-bold text-center text-slate-900 dark:text-white">
           Voucher Generator
         </h1>
         <div className="space-y-4">
@@ -164,11 +164,7 @@ export function VoucherGenerator() {
               type="number"
               value={quantity}
               max={33}
-              onChange={(e) =>
-                setQuantity(
-                  Number(e.target.value) > 33 ? Number(e.target.value) : 33
-                )
-              }
+              onChange={(e) => setQuantity(Number(e.target.value))}
               min="1"
               className="w-full p-2 bg-gray-100 border rounded-lg dark:bg-slate-700 dark:text-white"
             />
@@ -215,7 +211,7 @@ export function VoucherGenerator() {
             <h2 className="mb-4 text-2xl font-bold text-center text-slate-900 dark:text-white">
               Generated Vouchers
             </h2>
-            <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {vouchers.map((voucher, index) => (
                 <div key={index} className="p-4 border rounded-lg watermark">
                   <p>Amount: {voucher.amount}</p>
@@ -309,9 +305,9 @@ const ListVoucher: React.FC = () => {
         Toggle Theme
       </button>
 
-      <h1 className="text-3xl font-bold mb-6">Voucher Statistics</h1>
+      <h1 className="mb-6 text-3xl font-bold">Voucher Statistics</h1>
 
-      <div className="grid gap-3 grid-cols-3">
+      <div className="grid grid-cols-3 gap-3">
         {amounts.map((amount) => {
           const vouchersByAmount = getVouchersByAmount(amount);
           const { totalAmount, totalUsed, totalUnused } =
@@ -322,7 +318,7 @@ const ListVoucher: React.FC = () => {
               key={amount}
               className={`mb-6 p-4 border rounded-lg ${cardColors[amount]}`}
             >
-              <h2 className="text-2xl font-bold mb-4">Amount: {amount}</h2>
+              <h2 className="mb-4 text-2xl font-bold">Amount: {amount}</h2>
               {vouchersByAmount.length > 0 ? (
                 <>
                   <p>Total Amount (NGN): {totalAmount.toLocaleString()}</p>
