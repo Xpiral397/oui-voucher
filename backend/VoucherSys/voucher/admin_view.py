@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from .models import Voucher, Notification, Balance
 from .serializers import (
     VoucherCreateSerializer,
@@ -141,38 +141,40 @@ def fundUserAccount(request):
         )
 
 
-class LoginView(APIView):
-    def post(self, request, *args, **kwargs):
-        username = request.data.get("email")
-        password = request.data.get("password")
+@csrf_exempt
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def LoginView(request):
+    username = request.data.get("email")
+    password = request.data.get("password")
 
-        print("Jira")
-        # Try to authenticate as an admin (using email)
-        user = authenticate(request, username=username, password=password)
-        print(user)
+    print("Jira")
+    # Try to authenticate as an admin (using email)
+    user = authenticate(request, username=username, password=password)
+    print(user)
 
-        if user is not None:
-            # Check if the user is admin or student
-            if user.is_staff or not user.is_staff:
-                # Generate a token for the authenticated user
-                Token.objects.filter(user=user).delete()
-                token, created = Token.objects.get_or_create(user=user)
-                return Response({"token": str(token)}, status=status.HTTP_200_OK)
-        # If not an admin, try to authenticate as a student (using matrix number)
-        user = authenticate(request, username=username, password=password)
+    if user is not None:
+        # Check if the user is admin or student
+        if user.is_staff or not user.is_staff:
+            # Generate a token for the authenticated user
+            Token.objects.filter(user=user).delete()
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({"token": str(token)}, status=status.HTTP_200_OK)
+    # If not an admin, try to authenticate as a student (using matrix number)
+    user = authenticate(request, username=username, password=password)
 
-        if user is not None and not user.is_staff:
-            refresh = RefreshToken.for_user(user)
-            return Response(
-                {
-                    "refresh": str(refresh),
-                    "access": str(refresh.access_token),
-                }
-            )
-
+    if user is not None and not user.is_staff:
+        refresh = RefreshToken.for_user(user)
         return Response(
-            {"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
+            {
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+            }
         )
+
+    return Response(
+        {"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
+    )
 
 
 print(decode_jwt_token("1892ba5301afb051f2789f5df1c818cb980a0cd5"))

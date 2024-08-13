@@ -39,6 +39,27 @@ def generate_transaction_id(length=26):
     )
 
 
+from rest_framework import generics
+from .models import Payment
+from .serializers import PaymentSerializer
+
+
+class UsedVoucherPaymentListView(generics.ListAPIView):
+    serializer_class = PaymentSerializer
+
+    def get_queryset(self):
+        return Payment.objects.filter(voucher_used=True)
+
+
+from django.http import JsonResponse
+from django.views import View
+from django.core.mail import send_mail
+from django.conf import settings
+
+# from .models import Invitation
+from django.contrib.auth import get_user_model
+
+
 @csrf_exempt
 @api_view(["POST"])
 # @permission_classes([IsAuthenticated])

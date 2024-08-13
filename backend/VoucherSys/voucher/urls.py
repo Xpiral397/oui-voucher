@@ -14,7 +14,7 @@ urlpatterns = [
     path("delete-notification/", views.get_notifications, name="get_notifications"),
     path("get-balance/", views.get_balance, name="get_balance"),
     #  ADMIN ENDPOIN
-    path("admin/login/", views.LoginView.as_view(), name="login"),
+    path("admin/login/", views.LoginView, name="login"),
     path("fundaccount/", views.fundUserAccount, name="fund-account"),
     path("admin/me/", views.get_admin_profile, name="login-view"),
     path("admin/create-voucher/", views.admin_create_voucher, name="create_voucher"),
@@ -46,4 +46,9 @@ urlpatterns = [
         name="get_notifications",
     ),
     path("vouchers/", views.VoucherListCreate.as_view(), name="voucher-list-create"),
+    path(
+        "used-vouchers/",
+        views.UsedVoucherPaymentListView.as_view(),
+        name="usedvouchers",
+    ),
 ]

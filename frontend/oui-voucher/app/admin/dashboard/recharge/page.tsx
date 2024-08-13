@@ -4,7 +4,7 @@ import Logo from "@/public/logo.png"; // Adjust the import based on your project
 import { jsPDF } from "jspdf";
 import { v4 as uuidv4 } from "uuid"; // Import uuid library
 import { Card, CardBody, Tab, Tabs } from "@nextui-org/react";
-import { Analytics, Payment, Verified } from "@mui/icons-material";
+import { Analytics, DataUsage, Payment, Verified } from "@mui/icons-material";
 import { toast } from "react-toastify";
 import { base } from "@/base";
 
@@ -336,6 +336,106 @@ const ListVoucher: React.FC = () => {
   );
 };
 
+// components/UsedVoucherList.js
+
+function UsedVoucherList() {
+  const [vouchers, setVouchers] = useState<Array<any>>([]);
+  const [amountFilter, setAmountFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState("");
+  const [voucherFilter, setVoucherFilter] = useState("");
+  const [matricFilter, setMatricFilter] = useState("");
+
+  useEffect(() => {
+    axios
+      .get(`${base}/voucher/used-vouchers/`)
+      .then((response) => setVouchers(response.data))
+      .catch((error) => console.error("Error fetching vouchers:", error));
+  }, []);
+
+  const filteredVouchers = vouchers.filter((voucher) => {
+    const matchesAmount = amountFilter
+      ? voucher.amount.toString().includes(amountFilter)
+      : true;
+    const matchesDate = dateFilter
+      ? new Date(voucher.date_created).toISOString().slice(0, 10) === dateFilter
+      : true;
+    const matchesVoucherToken = voucherFilter
+      ? voucher.generated_voucher.includes(voucherFilter)
+      : true;
+    const matchesMatricNumber = matricFilter
+      ? voucher.student.matric_number.includes(matricFilter)
+      : true;
+
+    return (
+      matchesAmount && matchesDate && matchesVoucherToken && matchesMatricNumber
+    );
+  });
+
+  return (
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Used Vouchers</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+        <input
+          type="text"
+          placeholder="Filter by amount"
+          value={amountFilter}
+          onChange={(e) => setAmountFilter(e.target.value)}
+          className="p-2 border rounded"
+        />
+        <input
+          type="date"
+          placeholder="Filter by date"
+          value={dateFilter}
+          onChange={(e) => setDateFilter(e.target.value)}
+          className="p-2 border rounded"
+        />
+        <input
+          type="text"
+          placeholder="Filter by voucher token"
+          value={voucherFilter}
+          onChange={(e) => setVoucherFilter(e.target.value)}
+          className="p-2 border rounded"
+        />
+        <input
+          type="text"
+          placeholder="Filter by matric number"
+          value={matricFilter}
+          onChange={(e) => setMatricFilter(e.target.value)}
+          className="p-2 border rounded"
+        />
+      </div>
+      <table className="min-w-full bg-white dark:bg-gray-800 text-black dark:text-white">
+        <thead>
+          <tr>
+            <th className="py-2">Student Name</th>
+            <th className="py-2">Matric Number</th>
+            <th className="py-2">Level</th>
+            <th className="py-2">Voucher Token</th>
+            <th className="py-2">Amount</th>
+            <th className="py-2">Date Used</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredVouchers.map((voucher) => (
+            <tr key={voucher.id} className="border-b">
+              <td className="py-2">
+                {voucher.student.first_name} {voucher.student.last_name}
+              </td>
+              <td className="py-2">{voucher.student.matric_number}</td>
+              <td className="py-2">{voucher.student.level}</td>
+              <td className="py-2">{voucher.generated_voucher}</td>
+              <td className="py-2">{voucher.amount}</td>
+              <td className="py-2">
+                {new Date(voucher.date_created).toLocaleDateString()}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export default function Page() {
   return (
     <div className="flex flex-col w-full p-4 font-[Helvetica] tracking-wide text-warning-foreground">
@@ -367,6 +467,21 @@ export default function Page() {
           <Card>
             <CardBody className="dark:bg-slate-900">
               <ListVoucher />
+            </CardBody>
+          </Card>
+        </Tab>
+        <Tab
+          key="Usage"
+          title={
+            <div className="flex items-center space-x-2">
+              <DataUsage />
+              <span>Usage Analytics</span>
+            </div>
+          }
+        >
+          <Card>
+            <CardBody className="dark:bg-slate-900">
+              <UsedVoucherList />
             </CardBody>
           </Card>
         </Tab>

@@ -129,10 +129,14 @@ class PaymentTransactionSerializer(serializers.ModelSerializer):
 
 # serializers.py
 from rest_framework import serializers
+
+# from accounts.serializers import CustomerSerializer
 from .models import Payment
 
 
 class PaymentSerializer(serializers.ModelSerializer):
+    student = UserSerializer()
+
     class Meta:
         model = Payment
         fields = "__all__"
