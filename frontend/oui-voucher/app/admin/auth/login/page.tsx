@@ -74,7 +74,7 @@ export default function SiginCar() {
   useEffect(() => {
     if (admin && admin.email) {
       setUser(() => null);
-      router.push("/admin/dashboard/voucher");
+      router.push("/admin/dashboard/account");
       // toast.success(
       //   "ops sorry, it might be sweet but you are already login can't do this again",
       //   {
@@ -94,7 +94,7 @@ export default function SiginCar() {
   useEffect(() => {
     if (admin && admin.email) {
       setUser(() => null);
-      router.push("/admin/dashboard/voucher");
+      router.push("/admin/dashboard/account");
       //   toast.success(
       //     "ops sorry, it might be sweet but you are already login can't do this again",
       //     {
