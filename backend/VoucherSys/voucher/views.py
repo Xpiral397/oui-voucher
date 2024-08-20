@@ -362,6 +362,7 @@ from .serializers import VoucherSerializer
 class VoucherListCreate(generics.ListCreateAPIView):
     queryset = VoucherToken.objects.all()
     serializer_class = VoucherSerializers
+    permission_classes = []
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data, many=True)

@@ -47,6 +47,7 @@ import { DotsCircleHorizontalIcon } from "@heroicons/react/outline";
 import { ChipIcon } from "@heroicons/react/outline";
 import { toast } from "react-toastify";
 import { formatDistanceToNow, parseISO } from "date-fns";
+import { useAdminContext } from "@/contexts/users/useAdmin";
 
 interface Fee {
   id: string;
@@ -72,11 +73,22 @@ interface Voucher {
   values: string[];
 }
 
-const INITIAL_VISIBLE_COLUMNS = ["id", "semester", "total_amount", "status"];
+const INITIAL_VISIBLE_COLUMNS = [
+  "id",
+  "voucher_name",
+  "start_date",
+  "end_date",
+  "semester",
+  "created_for",
+  "total_amount",
+  "status",
+  "externalUserId",
+];
 
 function Page() {
+  const [userId, setUserId] = useState<Voucher[]>([]);
   const [sampleVouchers, setSampleVouchers] = useState<Voucher[]>([]);
-  const { user } = useContext(useUserContext);
+  const { admin: user } = useContext(useAdminContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
@@ -129,7 +141,7 @@ function Page() {
         });
       }
     })();
-  }, []);
+  }, [userId]);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -228,7 +240,7 @@ function Page() {
         case "password":
           "Not applicable";
         case "creator":
-          return voucher.creator?.matric_number == user?.matric_number
+          return (voucher.creator?.id as any) == (user?.id as any)
             ? "You"
             : voucher.creator?.matric_number;
         case "voucher_name":
@@ -240,7 +252,7 @@ function Page() {
           return cellValue;
         case "fees":
           return (
-            <div className="w-full relative flex  items-center ">
+            <div className="relative flex items-center w-full ">
               <Dropdown>
                 <DropdownTrigger>
                   <Button
@@ -250,7 +262,7 @@ function Page() {
                     variant="light"
                   >
                     <Chip
-                      className="capitalize p-3"
+                      className="p-3 capitalize"
                       color={"success"}
                       size="sm"
                       variant="flat"
@@ -275,7 +287,7 @@ function Page() {
                           {voucher?.fees.map((fee: Fee) => {
                             return (
                               <tr key={voucher.id}>
-                                <td className="border px-4 py-2">
+                                <td className="px-4 py-2 border">
                                   {" "}
                                   {
                                     <Chip
@@ -288,7 +300,7 @@ function Page() {
                                     </Chip>
                                   }
                                 </td>
-                                <td className="border px-4 py-2">
+                                <td className="px-4 py-2 border">
                                   {" "}
                                   {
                                     <Chip
@@ -301,7 +313,7 @@ function Page() {
                                     </Chip>
                                   }
                                 </td>
-                                <td className="border px-4 py-2">
+                                <td className="px-4 py-2 border">
                                   {" "}
                                   {
                                     <Chip
@@ -314,7 +326,7 @@ function Page() {
                                     </Chip>
                                   }
                                 </td>
-                                <td className="border px-4 py-2">
+                                <td className="px-4 py-2 border">
                                   {
                                     <Chip
                                       className="capitalize"
@@ -339,8 +351,8 @@ function Page() {
           );
         case "encrypt_voucher":
           return (
-            <div className="w-full flex justify-center mx-auto text-center items-center">
-              <DotsCircleHorizontalIcon className="text-blue-500 w-5 h-5 text-center mx-auto " />
+            <div className="flex items-center justify-center w-full mx-auto text-center">
+              <DotsCircleHorizontalIcon className="w-5 h-5 mx-auto text-center text-blue-500 " />
             </div>
           );
         case "status":
@@ -360,7 +372,7 @@ function Page() {
             : "N/A";
         case "actions":
           return (
-            <div className="relative flex justify-start items-center gap-2">
+            <div className="relative flex items-center justify-start gap-2">
               <Dropdown>
                 <DropdownTrigger>
                   <Button isIconOnly size="sm" variant="light">
@@ -375,16 +387,30 @@ function Page() {
                   >
                     <a href={`/dashboard/voucher/view/${voucher.id}`}>View</a>
                   </DropdownItem>
+                  <DropdownItem
+                    startContent={
+                      <RefreshIcon className="w-4 h-4 text-secondary" />
+                    }
+                  >
+                    Edit
+                  </DropdownItem>
+                  <DropdownItem
+                    startContent={
+                      <DocumentRemoveIcon className="w-4 h-4 text-secondary" />
+                    }
+                  >
+                    Delete
+                  </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
             </div>
           );
         case "timestamp":
           return (
-            <div className="w-full space-x-3 flex justify-center mx-auto text-center items-center">
-              {/* <TimeToLeave className="text-blue-500 w-5 h-5 text-center mx-auto " /> */}
+            <div className="flex items-center justify-center w-full mx-auto space-x-3 text-center">
+              {/* <TimeToLeave className="w-5 h-5 mx-auto text-center text-blue-500 " /> */}
               <div>
-                <ChipIcon className="w-8 h-8 animate-spin text-purple-300" />
+                <ChipIcon className="w-8 h-8 text-purple-300 animate-spin" />
               </div>
               <Chip color="secondary" size="sm" className="txt-[10px]">
                 {formatDistanceToNow(parseISO(cellValue as any), {
@@ -407,7 +433,7 @@ function Page() {
             // throw cellValue;
           }
           return (
-            <div className="relative flex justify-start items-center gap-2">
+            <div className="relative flex items-center justify-start gap-2">
               <Dropdown>
                 <DropdownTrigger>
                   <Button isIconOnly size="sm" variant="light">
@@ -435,10 +461,10 @@ function Page() {
           );
         case "semester":
           return (
-            <div className="w-full space-x-3 flex justify-center mx-auto text-center items-center">
-              {/* <TimeToLeave className="text-blue-500 w-5 h-5 text-center mx-auto " /> */}
+            <div className="flex items-center justify-center w-full mx-auto space-x-3 text-center">
+              {/* <TimeToLeave className="w-5 h-5 mx-auto text-center text-blue-500 " /> */}
               <div>
-                <ChipIcon className="w-8 h-8 animate-spin text-purple-300" />
+                <ChipIcon className="w-8 h-8 text-purple-300 animate-spin" />
               </div>
               <Chip color="secondary" size="sm" className="txt-[10px]">
                 {cellValue as string}
@@ -489,7 +515,7 @@ function Page() {
   const topContent = useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-end">
+        <div className="flex items-end justify-between gap-3">
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
@@ -556,13 +582,13 @@ function Page() {
             </Dropdown>
             <Button
               color="primary"
-              endContent={<PlusIcon className="text-default-300 w-3 h-4" />}
+              endContent={<PlusIcon className="w-3 h-4 text-default-300" />}
             >
               <a href="/dashboard/voucher/new">Add New</a>
             </Button>
           </div>
         </div>
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <span className="text-default-400 text-small">
             Total {sampleVouchers.length} vouchers
           </span>
@@ -592,7 +618,7 @@ function Page() {
 
   const bottomContent = useMemo(() => {
     return (
-      <div className="py-2 px-2 flex justify-between items-center">
+      <div className="flex items-center justify-between px-2 py-2">
         <span className="w-[30%] text-small text-default-400">
           {selectedKeys === "all"
             ? "All items selected"
@@ -631,7 +657,7 @@ function Page() {
 
   return (
     <>
-      <Navbar isBordered className="dark:bg-slate-900 mb-6">
+      <Navbar isBordered className="mb-6 dark:bg-slate-900">
         <NavbarContent>
           <NavbarBrand className="dark:bg-slate-900">
             <div color="inherit">Voucher Management</div>
@@ -680,7 +706,7 @@ function Page() {
             {(item) => (
               <TableRow key={item.id}>
                 {(columnKey) => (
-                  <TableCell key={item.id}>
+                  <TableCell>
                     {renderCell(item, columnKey as string) as string}
                   </TableCell>
                 )}
