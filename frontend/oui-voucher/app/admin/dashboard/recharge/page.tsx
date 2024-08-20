@@ -54,6 +54,7 @@ export function VoucherGenerator() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authentication: `Token ${getToken("Admin")}`,
         },
         body: JSON.stringify(vouchers),
       });
@@ -232,6 +233,7 @@ export function VoucherGenerator() {
 
 import { useTheme } from "next-themes";
 import axios from "axios";
+import { getToken } from "@/app/controller/auth/auth";
 
 interface Voucher {
   amount: string;

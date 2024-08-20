@@ -35,7 +35,6 @@ export const FeaturesSection = () => {
       description: "Create new vouchers easily for payments.",
       icon: <PlusIcon className="w-12 h-12" />,
     },
-
     {
       title: "Recharge Account",
       description: "Check the status of used vouchers.",
