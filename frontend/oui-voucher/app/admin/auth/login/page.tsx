@@ -174,7 +174,7 @@ export default function SiginCar() {
       setAdmin((user) => {
         return response.user as Admin;
       });
-      router.push("/admin/dashboard");
+      router.push("/admin/dashboard/account");
     } else {
       toast("Login Failed, Your email and your password did't match ", {
         type: "error",
