@@ -660,7 +660,7 @@ function Page() {
       <Navbar isBordered className="mb-6 dark:bg-slate-900">
         <NavbarContent>
           <NavbarBrand className="dark:bg-slate-900">
-            <div color="inherit">Voucher Management</div>
+            <div color="inherit">Payment Manager</div>
           </NavbarBrand>
           <Switch
             checked={isDark}
